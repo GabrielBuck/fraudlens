@@ -90,6 +90,8 @@ docker compose up --build
 
 O modo Docker inicializa migrações e cria uma base de demonstração apenas quando o volume persistente está vazio. Para ativar PostgreSQL: `docker compose --profile postgres up --build` e ajuste `DATABASE_URL`.
 
+Docker não estava disponível no ambiente local original de desenvolvimento. Posteriormente, o GitHub Actions validou a configuração do Compose, os builds das imagens de backend e frontend e um smoke test dos dois serviços. Essa validação não constitui benchmark de performance em containers.
+
 ### Execução local — Windows
 
 ```powershell

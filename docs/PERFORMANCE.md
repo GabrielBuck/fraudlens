@@ -39,4 +39,4 @@ A baixa prevalência injetada (0,8%) torna precision sensível a falsos positivo
 
 ## Leitura e limitações
 
-Alertas e listagem atendem confortavelmente à demonstração local. O monitoramento ainda varre transações para comparar janelas e é o endpoint mais caro; em produção, estatísticas seriam materializadas e armazenadas por execução. O benchmark não mede concorrência, rede externa, PostgreSQL ou containerização porque Docker não estava disponível no ambiente de validação.
+Alertas e listagem atendem confortavelmente à demonstração local. O monitoramento ainda varre transações para comparar janelas e é o endpoint mais caro; em produção, estatísticas seriam materializadas e armazenadas por execução. O benchmark não mede concorrência, rede externa, PostgreSQL ou containerização porque Docker não estava disponível no ambiente local original de validação. Posteriormente, o GitHub Actions validou a configuração do Compose, os builds das imagens e um smoke test funcional; essa verificação não mediu performance em containers.
