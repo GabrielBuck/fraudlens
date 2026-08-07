@@ -1,0 +1,49 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: sqlite:////data/fraudlens.db
+      FRONTEND_URL: http://localhost:3000
+      MODEL_ARTIFACT_PATH: /data/isolation_forest.joblib
+      AUTO_SEED: "true"
+      DEFAULT_ACCOUNT_COUNT: "120"
+      DEFAULT_TRANSACTION_COUNT: "5000"
+    volumes:
+      - fraudlens-data:/data
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      API_INTERNAL_URL: http://backend:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:17-alpine
+    profiles: ["postgres"]
+    environment:
+      POSTGRES_DB: fraudlens
+      POSTGRES_USER: fraudlens
+      POSTGRES_PASSWORD: local_demo_only
+    volumes:
+      - fraudlens-postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  fraudlens-data:
+  fraudlens-postgres:

@@ -1,0 +1,25 @@
+name: Bug report
+description: Relate um comportamento incorreto reproduzível.
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Não inclua segredos nem dados reais.
+  - type: textarea
+    id: description
+    attributes:
+      label: Descrição
+      description: O que aconteceu e o que era esperado?
+    validations: { required: true }
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reprodução
+      description: Passos mínimos, seed e ambiente.
+    validations: { required: true }
+  - type: textarea
+    id: logs
+    attributes:
+      label: Evidências sanitizadas
+      render: shell

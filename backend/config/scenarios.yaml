@@ -1,0 +1,10 @@
+seed: 42
+scenarios:
+  - account_takeover
+  - velocity_burst
+  - split_payment
+  - impossible_travel
+  - suspicious_duplicate
+  - unusual_hour_amount
+  - low_value_testing
+  - risky_counterparty

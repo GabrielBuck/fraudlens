@@ -1,0 +1,6 @@
+id,account_id,counterparty_id,device_id,timestamp,amount,currency,payment_method,direction,status,synthetic_scenario,synthetic_ground_truth
+TX-00000001,ACC-000001,CP-000001,DEV-000001,2026-04-02T13:10:00Z,248.90,BRL,PIX,saída,aprovada,,false
+TX-00000002,ACC-000001,CP-000002,DEV-000001,2026-04-03T14:22:00Z,980.00,BRL,boleto,saída,aprovada,,false
+TX-00000003,ACC-000002,CP-000006,DEV-000003,2026-04-03T16:15:00Z,1450.50,BRL,cartão,saída,aprovada,,false
+TX-00000004,ACC-000001,CP-000040,DEV-000002,2026-06-23T02:03:00Z,25000.00,BRL,PIX,saída,aprovada,account_takeover,true
+TX-00000005,ACC-000002,CP-000021,DEV-000003,2026-06-24T21:02:00Z,1490.00,BRL,PIX,saída,aprovada,velocity_burst,true

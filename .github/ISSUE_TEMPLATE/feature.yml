@@ -1,0 +1,21 @@
+name: Feature request
+description: Proponha uma evolução alinhada ao uso responsável.
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema
+      description: Qual necessidade de usuário será resolvida?
+    validations: { required: true }
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposta e trade-offs
+    validations: { required: true }
+  - type: textarea
+    id: risks
+    attributes:
+      label: Dados, segurança e uso responsável
+    validations: { required: true }

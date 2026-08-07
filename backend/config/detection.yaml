@@ -1,0 +1,25 @@
+scoring:
+  model_weight: 0.55
+  rules_weight: 0.45
+  alert_threshold: 30
+  model_only_alert_threshold: 95
+  minimum_rules_for_alert: 18
+  severity_thresholds:
+    medium: 30
+    high: 60
+    critical: 80
+
+rules:
+  - {id: NEW_DEVICE, name: Novo dispositivo, description: Dispositivo ainda não confiável para a conta., enabled: true, weight: 16, severity: média, threshold: 1, reason_code: NEW_DEVICE}
+  - {id: NEW_COUNTERPARTY, name: Nova contraparte, description: Primeiro pagamento observado para a contraparte., enabled: true, weight: 10, severity: média, threshold: 1, reason_code: NEW_COUNTERPARTY}
+  - {id: UNUSUAL_HOUR, name: Horário incomum, description: Operação fora da janela habitual da conta., enabled: true, weight: 9, severity: média, threshold: 1, reason_code: UNUSUAL_HOUR}
+  - {id: HIGH_AMOUNT_DEVIATION, name: Valor atípico, description: Valor muito superior ao histórico da conta., enabled: true, weight: 18, severity: alta, threshold: 3, reason_code: HIGH_AMOUNT_DEVIATION}
+  - {id: VELOCITY_5M, name: Velocidade em 5 minutos, description: Muitas operações em uma janela curta., enabled: true, weight: 18, severity: alta, threshold: 3, reason_code: VELOCITY_5M}
+  - {id: VELOCITY_1H, name: Velocidade em uma hora, description: Frequência horária acima do padrão., enabled: true, weight: 10, severity: média, threshold: 8, reason_code: VELOCITY_1H}
+  - {id: FAILED_AUTH_BURST, name: Falhas de autenticação, description: Múltiplas negações recentes indicam atrito de acesso., enabled: true, weight: 16, severity: alta, threshold: 3, reason_code: FAILED_AUTH_BURST}
+  - {id: IMPOSSIBLE_TRAVEL, name: Deslocamento incompatível, description: Velocidade geográfica estimada incompatível., enabled: true, weight: 24, severity: crítica, threshold: 900, reason_code: IMPOSSIBLE_TRAVEL}
+  - {id: DUPLICATE_PATTERN, name: Possível duplicidade, description: Valor e contraparte repetidos em intervalo curto., enabled: true, weight: 14, severity: alta, threshold: 1, reason_code: DUPLICATE_PATTERN}
+  - {id: RISKY_COUNTERPARTY, name: Contraparte de maior risco, description: Contraparte com risco histórico elevado no conjunto sintético., enabled: true, weight: 18, severity: alta, threshold: 1, reason_code: RISKY_COUNTERPARTY}
+  - {id: LOW_VALUE_TESTING, name: Teste de baixo valor, description: Tentativas de baixo valor e negações recentes., enabled: true, weight: 15, severity: alta, threshold: 1, reason_code: LOW_VALUE_TESTING}
+  - {id: SPLIT_PAYMENT_PATTERN, name: Fracionamento, description: Diversas saídas semelhantes em janela curta., enabled: true, weight: 15, severity: alta, threshold: 1, reason_code: SPLIT_PAYMENT_PATTERN}
+  - {id: UNUSUAL_PAYMENT_METHOD, name: Meio de pagamento incomum, description: Meio ainda não observado no histórico da conta., enabled: true, weight: 7, severity: baixa, threshold: 1, reason_code: UNUSUAL_PAYMENT_METHOD}
