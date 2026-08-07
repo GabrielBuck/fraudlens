@@ -9,11 +9,14 @@ O ponto central é simples: o FraudLens não é apenas um modelo de machine lear
 | Material                                           | Uso                                                |
 | -------------------------------------------------- | -------------------------------------------------- |
 | [CAROUSEL.md](CAROUSEL.md)                         | Roteiro e narrativa dos sete slides                |
+| [VISUAL_SYSTEM.md](VISUAL_SYSTEM.md)               | Direção de arte e regras do sistema visual         |
 | [LINKEDIN_POST.md](LINKEDIN_POST.md)               | Post recomendado, versão curta e versão técnica    |
 | [RECRUITER_PITCH.md](RECRUITER_PITCH.md)           | Pitches de 15, 30, 60 e 90 segundos                |
 | [TECHNICAL_PITCH.md](TECHNICAL_PITCH.md)           | Explicações técnicas de 30 segundos, 2 e 5 minutos |
 | [INTERVIEW_CHEATSHEET.md](INTERVIEW_CHEATSHEET.md) | Perguntas e respostas para entrevistas             |
 | [assets/](assets/)                                 | Slides finais em PNG, 1080 × 1350 px               |
+| [assets/feed/](assets/feed/)                       | Previews de legibilidade em 360 × 450 px           |
+| [concepts/](concepts/)                             | Três explorações preservadas para a capa           |
 | [source/](source/)                                 | HTML, CSS e script Playwright reproduzíveis        |
 
 ## Carrossel
@@ -42,15 +45,15 @@ npm --prefix frontend exec -- playwright install chromium
 node docs/portfolio/source/capture-carousel.mjs
 ```
 
-O script abre [carousel.html](source/carousel.html), captura cada elemento `.slide` e grava sete PNGs em `docs/portfolio/assets/`. A execução falha se a quantidade de slides ou as dimensões esperadas não forem respeitadas.
+O script abre [carousel.html](source/carousel.html), captura cada elemento `.slide`, grava sete PNGs em `docs/portfolio/assets/`, gera os previews de feed e monta [carousel-contact-sheet.png](assets/carousel-contact-sheet.png). A execução falha se a quantidade de slides ou as dimensões esperadas não forem respeitadas.
 
 ## Fontes visuais
 
-As composições reutilizam screenshots reais de `docs/images/` sem modificar seus números ou conteúdo factual. Molduras, recortes e sombras servem apenas para organizar a narrativa.
+As composições reutilizam screenshots reais de `docs/images/` sem modificar seus números ou conteúdo factual. Recortes, contraste, marcações e linhas conectam essas evidências à narrativa.
 
 ## Social preview do GitHub
 
-Recomendação: usar `docs/images/linkedin-cover.png` como Social Preview do repositório. Sua proporção horizontal de 1200 × 627 px é mais adequada ao cartão do GitHub do que o slide vertical de capa, embora ambos sigam a mesma identidade visual.
+O Social Preview horizontal existente não faz parte deste redesign vertical. Antes de substituí-lo, derive uma composição horizontal específica do novo sistema; não use o slide de capa cortado automaticamente.
 
 O GitHub CLI e a API pública não oferecem uma operação estável para configurar essa imagem. Faça o ajuste manualmente em:
 
