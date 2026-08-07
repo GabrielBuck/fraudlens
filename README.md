@@ -6,9 +6,10 @@
 
 **Do pagamento ao sinal. Do sinal à explicação.**
 
-[![Backend CI](https://img.shields.io/badge/backend-FastAPI-38d9f2)](backend/)
-[![Frontend](https://img.shields.io/badge/frontend-Next.js-8d7cf7)](frontend/)
-[![Data](https://img.shields.io/badge/dados-100%25%20sintéticos-48d7a0)](data/README.md)
+[![Backend CI](https://github.com/GabrielBuck/fraudlens/actions/workflows/backend-ci.yml/badge.svg?branch=main)](https://github.com/GabrielBuck/fraudlens/actions/workflows/backend-ci.yml)
+[![Frontend CI](https://github.com/GabrielBuck/fraudlens/actions/workflows/frontend-ci.yml/badge.svg?branch=main)](https://github.com/GabrielBuck/fraudlens/actions/workflows/frontend-ci.yml)
+[![Security](https://github.com/GabrielBuck/fraudlens/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/GabrielBuck/fraudlens/actions/workflows/security.yml)
+[![Docker CI](https://github.com/GabrielBuck/fraudlens/actions/workflows/docker-ci.yml/badge.svg?branch=main)](https://github.com/GabrielBuck/fraudlens/actions/workflows/docker-ci.yml)
 [![License](https://img.shields.io/badge/licença-MIT-f6c85f)](LICENSE)
 
 </div>
@@ -16,6 +17,10 @@
 ![Visão geral do FraudLens](docs/images/overview.png)
 
 > Uma plataforma full stack para geração, detecção, explicação e investigação visual de anomalias em pagamentos digitais totalmente sintéticos.
+
+**Snapshot sintético medido:** 1.000 contas · 50.000 transações · recall 93% · PR-AUC 0,8523 · 2.814 alertas. Os resultados não representam desempenho em produção.
+
+[Arquitetura](docs/ARCHITECTURE.md) · [Resultados](docs/PERFORMANCE.md) · [Portfolio pack](docs/portfolio/README.md) · [Model card](docs/MODEL_CARD.md) · [Segurança](SECURITY.md)
 
 ## O problema
 
