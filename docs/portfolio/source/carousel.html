@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FraudLens — Portfolio Carousel</title>
+    <link rel="stylesheet" href="carousel.css" />
+  </head>
+  <body>
+    <main class="deck">
+      <section class="slide slide-cover" data-output="slide-01-cover.png">
+        <div class="ambient ambient-cyan"></div>
+        <div class="ambient ambient-purple"></div>
+        <header class="slide-header">
+          <div class="brand-lockup">
+            <span class="radar-mark"><i></i></span>
+            <span><strong>FraudLens</strong><small>ANOMALY RADAR</small></span>
+          </div>
+          <span class="synthetic-pill">100% dados sintéticos</span>
+        </header>
+
+        <div class="cover-copy">
+          <span class="eyebrow">PORTFOLIO CASE · 2026</span>
+          <h1>FraudLens</h1>
+          <p class="product-name">Intelligent Payment Anomaly Radar</p>
+          <h2>Do pagamento ao sinal.<br /><em>Do sinal à explicação.</em></h2>
+          <div class="tag-row">
+            <span>Dados</span><i>+</i><span>Machine Learning</span><i>+</i
+            ><span>Software</span><i>+</i><span>Segurança</span>
+          </div>
+        </div>
+
+        <div class="cover-stage">
+          <div class="dashboard-shot">
+            <div class="window-bar">
+              <i></i><i></i><i></i><span>fraudlens / visão geral</span>
+            </div>
+            <img
+              src="../../images/overview.png"
+              alt="Dashboard real do FraudLens"
+            />
+          </div>
+          <div class="radar-orbit" aria-hidden="true">
+            <i class="orbit-dot dot-a"></i><i class="orbit-dot dot-b"></i
+            ><i class="orbit-dot dot-c"></i>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>Sistema completo, não apenas um modelo.</span><b>01 / 07</b>
+        </footer>
+      </section>
+
+      <section class="slide slide-problem" data-output="slide-02-problem.png">
+        <header class="slide-header compact">
+          <span class="section-label">01 · O PROBLEMA</span>
+          <span class="folio">FraudLens</span>
+        </header>
+
+        <div class="problem-title">
+          <h1>Um score sozinho<br /><em>não explica</em> uma anomalia.</h1>
+          <p>
+            Volume sem contexto vira ruído. Contexto sem prioridade vira fila.
+          </p>
+        </div>
+
+        <div class="funnel-flow">
+          <div class="funnel-step step-wide">
+            <strong>50.000</strong><span>pagamentos sintéticos</span>
+          </div>
+          <span class="flow-arrow">↓</span>
+          <div class="funnel-step step-mid">
+            <strong>milhares</strong><span>de comportamentos</span>
+          </div>
+          <span class="flow-arrow">↓</span>
+          <div class="funnel-step step-focus">
+            <span>alguns sinais</span><strong>merecem investigação</strong>
+          </div>
+        </div>
+
+        <div class="signal-cloud" aria-label="Contextos analisados">
+          <span>histórico</span><span>dispositivo</span><span>horário</span
+          ><span>localização</span><span>contraparte</span
+          ><span>velocidade</span><span>valor</span>
+        </div>
+
+        <div class="statement-card">
+          <span class="statement-mark">→</span>
+          <p>
+            O desafio não é apenas detectar.<br /><strong
+              >É explicar o que merece atenção.</strong
+            >
+          </p>
+        </div>
+
+        <footer class="slide-footer">
+          <span>Sinal não é prova. É ponto de partida.</span><b>02 / 07</b>
+        </footer>
+      </section>
+
+      <section
+        class="slide slide-pipeline"
+        data-output="slide-03-how-it-works.png"
+      >
+        <header class="slide-header compact">
+          <span class="section-label">02 · COMO FUNCIONA</span>
+          <span class="folio">FraudLens</span>
+        </header>
+
+        <div class="pipeline-heading">
+          <h1>Do dado bruto à<br /><em>prioridade de investigação.</em></h1>
+          <p>
+            O modelo encontra isolamento. As regras preservam sinais legíveis.
+          </p>
+        </div>
+
+        <div class="pipeline-board">
+          <div class="pipe-node cyan-node">
+            <small>ENTRADA</small><strong>Pagamentos sintéticos</strong>
+          </div>
+          <span class="pipe-arrow">↓</span>
+          <div class="pipe-node">
+            <small>CONTEXTO</small><strong>Feature Engineering causal</strong>
+          </div>
+          <span class="pipe-arrow">↓</span>
+          <div class="split-models">
+            <div class="pipe-node model-node">
+              <small>MODELO</small><strong>Isolation Forest</strong
+              ><span>não supervisionado</span>
+            </div>
+            <div class="plus-sign">+</div>
+            <div class="pipe-node rules-node">
+              <small>DOMÍNIO</small><strong>13 regras explicáveis</strong
+              ><span>configuradas em YAML</span>
+            </div>
+          </div>
+          <span class="pipe-arrow">↓</span>
+          <div class="pipe-outcomes">
+            <div>
+              <small>ORDENAÇÃO</small><strong>Risk score</strong
+              ><span>prioridade, não probabilidade</span>
+            </div>
+            <span>→</span>
+            <div>
+              <small>CONTEXTO</small><strong>Explicação</strong
+              ><span>evidências rastreáveis</span>
+            </div>
+            <span>→</span>
+            <div>
+              <small>DECISÃO</small><strong>Investigação humana</strong
+              ><span>revisão responsável</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-strip">
+          <div><strong>40</strong><span>features</span></div>
+          <div><strong>13</strong><span>regras</span></div>
+          <div><strong>1</strong><span>modelo não supervisionado</span></div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>Explicabilidade nasce junto do scoring.</span><b>03 / 07</b>
+        </footer>
+      </section>
+
+      <section
+        class="slide slide-investigation"
+        data-output="slide-04-investigation.png"
+      >
+        <header class="slide-header compact">
+          <span class="section-label">03 · INVESTIGAÇÃO</span>
+          <span class="folio">FraudLens</span>
+        </header>
+
+        <div class="investigation-heading">
+          <h1>Contexto antes<br />da <em>conclusão.</em></h1>
+          <p>
+            O analista atravessa o alerta, o histórico e a rede — sem perder a
+            trilha do sinal.
+          </p>
+        </div>
+
+        <div class="investigation-canvas">
+          <div class="shot-card account-shot">
+            <span class="shot-label">PERFIL E TIMELINE</span>
+            <img
+              src="../../images/account.png"
+              alt="Perfil real de conta no FraudLens"
+            />
+          </div>
+          <div class="shot-card network-shot">
+            <span class="shot-label">REDE DE RELACIONAMENTOS</span>
+            <img
+              src="../../images/network.png"
+              alt="Grafo real de relacionamentos no FraudLens"
+            />
+          </div>
+          <div class="question-stack">
+            <span>01</span>
+            <p>O que aconteceu?</p>
+            <span>02</span>
+            <p>Por que foi sinalizado?</p>
+            <span>03</span>
+            <p>O que mudou?</p>
+            <span>04</span>
+            <p>Qual era o comportamento normal?</p>
+            <span>05</span>
+            <p>Quais eventos vieram antes?</p>
+          </div>
+        </div>
+
+        <div class="investigation-tags">
+          <span>score</span><span>regras</span><span>modelo</span
+          ><span>contraparte</span><span>dispositivo</span><span>timeline</span
+          ><span>grafo</span>
+        </div>
+
+        <footer class="slide-footer">
+          <span>Screenshots reais · dados totalmente sintéticos</span
+          ><b>04 / 07</b>
+        </footer>
+      </section>
+
+      <section
+        class="slide slide-architecture"
+        data-output="slide-05-architecture.png"
+      >
+        <header class="slide-header compact">
+          <span class="section-label">04 · ARQUITETURA</span>
+          <span class="folio">FraudLens</span>
+        </header>
+
+        <div class="architecture-heading">
+          <h1>Uma solução.<br /><em>O fluxo inteiro.</em></h1>
+          <p>
+            Arquitetura pragmática para demonstrar dados, ML, software e
+            operação.
+          </p>
+        </div>
+
+        <div class="architecture-map">
+          <div class="arch-node">
+            <span>01</span>
+            <div><small>GERAÇÃO</small><strong>Synthetic Data</strong></div>
+            <b>↓</b>
+          </div>
+          <div class="arch-node">
+            <span>02</span>
+            <div><small>DADOS</small><strong>Python · pandas</strong></div>
+            <b>↓</b>
+          </div>
+          <div class="arch-node">
+            <span>03</span>
+            <div>
+              <small>CONTEXTO</small><strong>Feature Engineering</strong>
+            </div>
+            <b>↓</b>
+          </div>
+          <div class="arch-node highlight">
+            <span>04</span>
+            <div>
+              <small>DETECÇÃO</small
+              ><strong>Isolation Forest + Rule Engine</strong>
+            </div>
+            <b>↓</b>
+          </div>
+          <div class="arch-node">
+            <span>05</span>
+            <div>
+              <small>PERSISTÊNCIA</small
+              ><strong>SQLAlchemy · SQLite / PostgreSQL</strong>
+            </div>
+            <b>↓</b>
+          </div>
+          <div class="arch-node">
+            <span>06</span>
+            <div><small>API</small><strong>FastAPI</strong></div>
+            <b>↓</b>
+          </div>
+          <div class="arch-node">
+            <span>07</span>
+            <div>
+              <small>EXPERIÊNCIA</small
+              ><strong>Next.js · React · Dashboard</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="quality-base">
+          <span>Docker</span><span>GitHub Actions</span><span>CodeQL</span
+          ><span>Tests</span>
+        </div>
+        <div class="architecture-values">
+          <strong>Full-stack</strong><strong>Reprodutível</strong
+          ><strong>Containerizado</strong><strong>Testado</strong>
+        </div>
+
+        <footer class="slide-footer">
+          <span>Monólito modular · limites claros · execução local</span
+          ><b>05 / 07</b>
+        </footer>
+      </section>
+
+      <section class="slide slide-results" data-output="slide-06-results.png">
+        <header class="slide-header compact">
+          <span class="section-label">05 · RESULTADOS</span>
+          <span class="folio">FraudLens</span>
+        </header>
+
+        <div class="results-heading">
+          <h1>Resultados reais.<br /><em>Contexto explícito.</em></h1>
+          <p>Uma execução reproduzível sobre cenários controlados.</p>
+        </div>
+
+        <div class="results-grid">
+          <div class="result-card">
+            <strong>1.000</strong><span>contas sintéticas</span>
+          </div>
+          <div class="result-card">
+            <strong>50.000</strong><span>transações</span>
+          </div>
+          <div class="result-card">
+            <strong>8</strong><span>cenários sintéticos</span>
+          </div>
+          <div class="result-card hero-result cyan-result">
+            <strong>93%</strong><span>Recall</span
+            ><small>cenários recuperados</small>
+          </div>
+          <div class="result-card hero-result purple-result">
+            <strong>0,8523</strong><span>PR-AUC</span
+            ><small>ordenação no conjunto sintético</small>
+          </div>
+          <div class="result-card">
+            <strong>2.814</strong><span>alertas gerados</span>
+          </div>
+        </div>
+
+        <div class="honesty-row">
+          <div><span>PRECISION</span><strong>13,22%</strong></div>
+          <div><span>F1</span><strong>0,2315</strong></div>
+          <div><span>BACKEND COVERAGE</span><strong>86,19%</strong></div>
+          <div>
+            <span>AUDITS EXECUTADOS</span
+            ><strong>0 vulnerabilidades conhecidas</strong>
+          </div>
+        </div>
+
+        <div class="synthetic-note">
+          <i>i</i>
+          <p>
+            <strong
+              >Resultados obtidos em dados e cenários 100% sintéticos.</strong
+            ><br />Não representam desempenho em produção.
+          </p>
+        </div>
+
+        <footer class="slide-footer">
+          <span>Recall é 93%. Precision é 13,22%.</span><b>06 / 07</b>
+        </footer>
+      </section>
+
+      <section class="slide slide-closing" data-output="slide-07-closing.png">
+        <div class="ambient ambient-cyan closing-glow"></div>
+        <header class="slide-header">
+          <div class="brand-lockup">
+            <span class="radar-mark"><i></i></span>
+            <span><strong>FraudLens</strong><small>ANOMALY RADAR</small></span>
+          </div>
+          <span class="synthetic-pill">PORTFOLIO CASE</span>
+        </header>
+
+        <div class="closing-copy">
+          <span class="eyebrow">O PRINCIPAL APRENDIZADO</span>
+          <h1>O maior aprendizado<br />não foi um algoritmo.</h1>
+          <h2>Foi conectar tecnologia<br /><em>a uma decisão.</em></h2>
+        </div>
+
+        <div class="discipline-orbit">
+          <div class="decision-core">
+            <span>revisão</span><strong>humana</strong>
+          </div>
+          <span class="discipline d1">Data Engineering</span>
+          <span class="discipline d2">Machine Learning</span>
+          <span class="discipline d3">Backend</span>
+          <span class="discipline d4">Frontend</span>
+          <span class="discipline d5">Security</span>
+          <span class="discipline d6">Product Thinking</span>
+        </div>
+
+        <div class="github-cta">
+          <span>Código, arquitetura e documentação disponíveis no GitHub.</span>
+          <strong>github.com/GabrielBuck/fraudlens</strong>
+        </div>
+
+        <footer class="slide-footer">
+          <span>FraudLens · investigar, não condenar</span><b>07 / 07</b>
+        </footer>
+      </section>
+    </main>
+  </body>
+</html>
