@@ -214,11 +214,7 @@ Contribuições seguem [CONTRIBUTING.md](CONTRIBUTING.md) e [CODE_OF_CONDUCT.md]
 
 ## Autoria
 
-Projeto de portfólio — substitua antes de publicar:
-
-- **Nome:** `[SEU NOME]`
-- **LinkedIn:** `[SEU LINKEDIN]`
-- **GitHub:** `[SEU GITHUB]`
+Projeto de portfólio desenvolvido por [GabrielBuck](https://github.com/GabrielBuck).
 
 ## English summary
 

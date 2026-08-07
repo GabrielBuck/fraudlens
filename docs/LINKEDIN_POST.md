@@ -1,6 +1,6 @@
 # Publicações para LinkedIn
 
-Substitua `[LINK DO GITHUB]` e dados de autoria antes de publicar. Use somente métricas realmente exibidas no dashboard da sua execução.
+Use somente métricas realmente exibidas no dashboard da sua execução.
 
 ## 1. Versão técnica
 
@@ -12,7 +12,7 @@ Diferenciais: seed reproduzível, testes contra target leakage, score decomposto
 
 O principal aprendizado: explicabilidade não é um componente visual; ela precisa nascer junto dos dados e da lógica de scoring.
 
-Código e documentação: [LINK DO GITHUB]
+Código e documentação: https://github.com/GabrielBuck/fraudlens
 
 #DataEngineering #MachineLearning #FastAPI #Nextjs #CyberSecurity
 
@@ -24,7 +24,7 @@ No FraudLens, pagamentos 100% fictícios percorrem um fluxo completo: geração,
 
 Desenvolvi backend, dashboard, modelo não supervisionado, regras de risco, testes, Docker, CI e documentação executiva. O produto deixa claro que um alerta não condena: ele prioriza o que merece contexto.
 
-Veja a demonstração e o estudo de caso: [LINK DO GITHUB]
+Veja a demonstração e o estudo de caso: https://github.com/GabrielBuck/fraudlens
 
 #TechPortfolio #Trainee #DataScience #SoftwareEngineering #Fintech
 
@@ -36,7 +36,7 @@ A resposta virou o FraudLens. Primeiro vieram os dados sintéticos. Depois, o cu
 
 O aprendizado mais valioso não foi uma biblioteca. Foi projetar limites: score não é culpa, métrica sintética não é resultado de produção e automação não substitui revisão responsável.
 
-Projeto completo: [LINK DO GITHUB]
+Projeto completo: https://github.com/GabrielBuck/fraudlens
 
 #BuildInPublic #LearningJourney #Data #AI #Product
 
