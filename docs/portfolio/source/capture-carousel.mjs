@@ -1,10 +1,11 @@
-import { mkdir } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const sourceDirectory = path.dirname(fileURLToPath(import.meta.url));
 const outputDirectory = path.resolve(sourceDirectory, "../assets");
+const feedDirectory = path.resolve(outputDirectory, "feed");
 const htmlPath = path.resolve(sourceDirectory, "carousel.html");
 
 const requireFromFrontend = createRequire(
@@ -13,6 +14,7 @@ const requireFromFrontend = createRequire(
 const { chromium } = requireFromFrontend("@playwright/test");
 
 await mkdir(outputDirectory, { recursive: true });
+await mkdir(feedDirectory, { recursive: true });
 
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({
@@ -83,7 +85,111 @@ try {
       caret: "hide",
     });
     console.log(`Created ${outputName} (1080x1350)`);
+
+    await slide.evaluate((element) => {
+      element.style.transform = "scale(0.3333333333)";
+      element.style.transformOrigin = "top left";
+    });
+    const feedBox = await slide.boundingBox();
+    if (
+      !feedBox ||
+      Math.round(feedBox.width) !== 360 ||
+      Math.round(feedBox.height) !== 450
+    ) {
+      throw new Error(
+        `${outputName} feed preview is not exactly 360x450: ${JSON.stringify(feedBox)}`,
+      );
+    }
+    await slide.screenshot({
+      path: path.join(feedDirectory, outputName),
+      animations: "disabled",
+      caret: "hide",
+    });
+    await slide.evaluate((element) => {
+      element.style.removeProperty("transform");
+      element.style.removeProperty("transform-origin");
+    });
+    console.log(`Created feed/${outputName} (360x450)`);
   }
+
+  const slideSources = await Promise.all(
+    Array.from({ length: count }, async (_, index) => {
+      const outputName = await slides.nth(index).getAttribute("data-output");
+      const png = await readFile(path.join(outputDirectory, outputName));
+      return `data:image/png;base64,${png.toString("base64")}`;
+    }),
+  );
+  const contactPage = await browser.newPage({
+    viewport: { width: 1200, height: 2800 },
+    deviceScaleFactor: 1,
+  });
+  await contactPage.setContent(`
+    <!doctype html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8" />
+        <style>
+          * { box-sizing: border-box; }
+          html, body { margin: 0; background: #020303; }
+          .sheet {
+            width: 1080px;
+            padding: 42px;
+            color: #e7e5df;
+            background: #07090b;
+            font-family: Consolas, "Courier New", monospace;
+          }
+          header {
+            height: 88px;
+            display: flex;
+            align-items: start;
+            justify-content: space-between;
+            border-bottom: 2px solid #ff3b30;
+          }
+          header strong { font: 42px Impact, "Arial Narrow", sans-serif; letter-spacing: 1px; }
+          header span { color: #858b8f; font-size: 11px; letter-spacing: 1px; }
+          .grid {
+            padding-top: 24px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+          }
+          figure { margin: 0; }
+          img { width: 486px; height: 608px; display: block; object-fit: cover; }
+          figcaption {
+            padding: 10px 0 2px;
+            color: #858b8f;
+            font-size: 10px;
+            letter-spacing: 1px;
+          }
+        </style>
+      </head>
+      <body>
+        <section class="sheet">
+          <header><strong>FRAUDLENS / VISUAL RHYTHM</strong><span>FINANCIAL FORENSICS · 07 SLIDES</span></header>
+          <div class="grid">
+            ${slideSources
+              .map(
+                (source, index) =>
+                  `<figure><img src="${source}" /><figcaption>0${index + 1} / INVESTIGATION FILE</figcaption></figure>`,
+              )
+              .join("")}
+          </div>
+        </section>
+      </body>
+    </html>
+  `);
+  await contactPage.waitForFunction(() =>
+    Array.from(document.images).every(
+      (image) => image.complete && image.naturalWidth > 0,
+    ),
+  );
+  await contactPage.locator(".sheet").screenshot({
+    path: path.join(outputDirectory, "carousel-contact-sheet.png"),
+    animations: "disabled",
+    caret: "hide",
+  });
+  await contactPage.close();
+  console.log("Created carousel-contact-sheet.png");
 } finally {
   await browser.close();
 }
