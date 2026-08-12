@@ -11,6 +11,7 @@ ENV PATH=/opt/venv/bin:$PATH \
     PYTHONUNBUFFERED=1
 RUN groupadd --system fraudlens && useradd --system --gid fraudlens --home /app fraudlens
 WORKDIR /app
+RUN mkdir -p /data && chown fraudlens:fraudlens /data
 COPY --from=builder /opt/venv /opt/venv
 COPY --chown=fraudlens:fraudlens alembic.ini ./
 COPY --chown=fraudlens:fraudlens alembic ./alembic
