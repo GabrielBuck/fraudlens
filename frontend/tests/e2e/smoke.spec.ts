@@ -33,7 +33,7 @@ test("investigates and reviews an alert", async ({ page }) => {
   await page.getByRole("button", { name: "Marcar falso positivo" }).click();
   await expect(page.getByRole("status")).toContainText("sucesso");
   await page.reload();
-  await expect(page.getByText("Revisão e2e sintética.")).toBeVisible();
+  await expect(page.getByText("Revisão e2e sintética.").first()).toBeVisible();
   await page.getByRole("link", { name: /ACC-/ }).first().click();
   await expect(page.getByText("Linha do tempo transacional")).toBeVisible();
   await page.getByRole("link", { name: "Modelo e dados" }).click();
