@@ -25,7 +25,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  "mypy>=1.14,<2",
+  "mypy>=1.14,<3",
   "pandas-stubs>=2.2,<3",
   "pip-audit>=2.7,<3",
   "pytest>=9.0.3,<10",
