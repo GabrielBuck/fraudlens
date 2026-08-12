@@ -12,11 +12,9 @@ test("investigates and reviews an alert", async ({ page }) => {
 
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "Visão geral de risco" }),
+    page.getByRole("heading", { name: "Operações de risco" }),
   ).toBeVisible();
-  await expect(
-    page.getByText("Volume monitorado", { exact: true }),
-  ).toBeVisible();
+  await expect(page.getByText(/Volume monitorado/i).first()).toBeVisible();
   await page.getByRole("link", { name: "Alertas", exact: true }).click();
   await expect(page).toHaveURL(/\/alerts$/);
   await page
@@ -30,12 +28,15 @@ test("investigates and reviews an alert", async ({ page }) => {
   await expect(
     page.getByText("Por que este evento foi sinalizado?"),
   ).toBeVisible();
+  await expect(page.getByText("Decomposição da prioridade")).toBeVisible();
   await page.getByLabel("Comentário da análise").fill("Revisão e2e sintética.");
   await page.getByRole("button", { name: "Marcar falso positivo" }).click();
   await expect(page.getByRole("status")).toContainText("sucesso");
+  await page.reload();
+  await expect(page.getByText("Revisão e2e sintética.").first()).toBeVisible();
   await page.getByRole("link", { name: /ACC-/ }).first().click();
   await expect(page.getByText("Linha do tempo transacional")).toBeVisible();
-  await page.getByRole("link", { name: "Modelo" }).click();
+  await page.getByRole("link", { name: "Modelo e dados" }).click();
   await expect(page.getByText(/IsolationForest/)).toBeVisible();
   expect(browserIssues).toEqual([]);
 });

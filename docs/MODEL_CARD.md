@@ -14,7 +14,7 @@ Valores e log, estatísticas históricas, z-score, razão para média, ciclo tem
 
 ## Algoritmo e treinamento
 
-Pipeline: imputação pela mediana, `RobustScaler` e `IsolationForest(n_estimators=180, contamination=0.08, random_state=seed)`. O modelo é treinado em todas as linhas sem rótulo e salvo junto à ordem das features, seed e parâmetros.
+Pipeline: imputação pela mediana, `RobustScaler` e `IsolationForest(n_estimators=180, contamination=0.08, random_state=seed)`. O modelo é treinado em todas as linhas sem rótulo e salvo junto à ordem das features, seed e parâmetros. A execução persiste também hash do dataset, assinatura das features, versão do código e SHA-256 do artefato.
 
 ## Score
 

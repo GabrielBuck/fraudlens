@@ -46,10 +46,32 @@ def test_score_is_bounded_and_severity_is_configured() -> None:
         100, 100, [_rule("NEW_DEVICE"), _rule("NEW_COUNTERPARTY"), _rule("HIGH_AMOUNT_DEVIATION")]
     )
     assert result.final == 100
+    assert result.booster == 8
     assert result.severity == "crítica"
     assert severity_for(29.99) == "baixa"
     assert severity_for(30) == "média"
     assert severity_for(60) == "alta"
+    assert severity_for(79.99) == "alta"
+    assert severity_for(80) == "crítica"
+
+
+def test_score_weights_and_context_booster_are_explicit() -> None:
+    plain = combine_scores(80, 60, [_rule("NEW_DEVICE")])
+    boosted = combine_scores(
+        80,
+        60,
+        [_rule("NEW_DEVICE"), _rule("FAILED_AUTH_BURST")],
+    )
+    assert plain.final == 71
+    assert plain.booster == 0
+    assert boosted.final == 79
+    assert boosted.booster == 8
+    try:
+        combine_scores(50, 50, [], model_weight=0.8, rules_weight=0.3)
+    except ValueError as exc:
+        assert "add up" in str(exc)
+    else:
+        raise AssertionError("Expected invalid score weights to fail")
 
 
 def test_explanation_is_neutral_and_includes_components() -> None:

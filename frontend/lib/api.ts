@@ -1,11 +1,11 @@
-import type { Alert, Overview } from "./types";
+import type { Alert, Meta, Overview } from "./types";
 
 const browserBase = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const serverBase = process.env.API_INTERNAL_URL ?? browserBase;
 
 export async function apiGet<T>(path: string): Promise<T> {
   const response = await fetch(`${serverBase}${path}`, {
-    next: { revalidate: 30 },
+    cache: "no-store",
   });
   if (!response.ok)
     throw new Error(`Falha ao carregar ${path}: ${response.status}`);
@@ -26,3 +26,4 @@ export async function browserApi<T>(
 
 export const getOverview = () => apiGet<Overview>("/api/v1/overview");
 export const getAlert = (id: string) => apiGet<Alert>(`/api/v1/alerts/${id}`);
+export const getMeta = () => apiGet<Meta>("/api/v1/meta");

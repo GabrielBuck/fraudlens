@@ -10,6 +10,7 @@ class RiskScore:
     final: float
     model: float
     rules: float
+    booster: float
     severity: str
 
 
@@ -29,6 +30,9 @@ def combine_scores(
     rules: list[RuleResult],
     model_weight: float = 0.55,
     rules_weight: float = 0.45,
+    medium_threshold: float = 30,
+    high_threshold: float = 60,
+    critical_threshold: float = 80,
 ) -> RiskScore:
     if abs(model_weight + rules_weight - 1.0) > 1e-6:
         raise ValueError("Score weights must add up to 1.0")
@@ -39,8 +43,12 @@ def combine_scores(
         {"IMPOSSIBLE_TRAVEL", "NEW_DEVICE"},
         {"VELOCITY_5M", "SPLIT_PAYMENT_PATTERN"},
     ]
-    boost = 8 if any(combo.issubset(triggered) for combo in boosters) else 0
+    boost = 8.0 if any(combo.issubset(triggered) for combo in boosters) else 0.0
     final = min(100.0, max(0.0, model_score * model_weight + rules_score * rules_weight + boost))
     return RiskScore(
-        round(final, 2), round(model_score, 2), round(rules_score, 2), severity_for(final)
+        final=round(final, 2),
+        model=round(model_score, 2),
+        rules=round(rules_score, 2),
+        booster=boost,
+        severity=severity_for(final, medium_threshold, high_threshold, critical_threshold),
     )

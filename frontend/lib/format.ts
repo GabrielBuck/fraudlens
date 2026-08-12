@@ -7,8 +7,11 @@ export const currency = new Intl.NumberFormat("pt-BR", {
 export const number = new Intl.NumberFormat("pt-BR").format;
 export const percent = (value: number) =>
   `${value.toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%`;
+export const parseDate = (value: string) =>
+  new Date(/[zZ]|[+-]\d\d:\d\d$/.test(value) ? value : `${value}Z`);
 export const dateTime = (value: string) =>
   new Intl.DateTimeFormat("pt-BR", {
     dateStyle: "short",
     timeStyle: "short",
-  }).format(new Date(value));
+    timeZone: "UTC",
+  }).format(parseDate(value)) + " UTC";

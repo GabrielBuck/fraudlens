@@ -67,12 +67,12 @@ export function NetworkGraph({
         minZoom={0.35}
         maxZoom={2}
       >
-        <Background color="#294055" gap={22} />
+        <Background color="#343a40" gap={22} />
         <MiniMap
           nodeColor={(node) =>
-            node.className?.includes("risk") ? "#ff5570" : "#38d9f2"
+            node.className?.includes("risk") ? "#df5b57" : "#77818b"
           }
-          maskColor="rgba(6,15,24,.75)"
+          maskColor="rgba(18,20,22,.78)"
         />
         <Controls />
       </ReactFlow>

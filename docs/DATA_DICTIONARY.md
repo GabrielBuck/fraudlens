@@ -11,6 +11,7 @@
 | `transactions` | `TX-00000001` | Conta, contraparte, dispositivo, valor, método, direção, status e localização |
 | `alerts` | `ALT-00000001` | Scores, severidade, motivos, explicação, evidência e revisão |
 | `model_runs` | `RUN-*` | Parâmetros, features, volumes, métricas e artefato |
+| `dataset_manifests` | `DST-*` | Seed, schema, intervalo, contagens, hash e validações de integridade |
 | `alert_feedback` | `FDB-*` | Classificação, comentário e timestamp da decisão humana |
 
 Todos os timestamps são UTC/timezone-aware na aplicação. Valores são BRL fictícios. Estados de alerta: `novo`, `em análise`, `fraude confirmada`, `falso positivo`, `encerrado`. Severidades: `baixa`, `média`, `alta`, `crítica`.
@@ -24,7 +25,9 @@ Todos os timestamps são UTC/timezone-aware na aplicação. Valores são BRL fic
 - **Dispositivo/local:** novo/confiável, dispositivos 24h, distâncias, velocidade, cidade/país novos.
 - **Canal/conta:** frequência e novidade do método, taxa de negação, idade, volume mensal e proporção de saídas.
 
-`synthetic_ground_truth` e `synthetic_scenario` são rótulos de avaliação e nunca features.
+`synthetic_ground_truth` e `synthetic_scenario` são rótulos de avaliação: nunca entram em features nem em contratos operacionais da API. A interface operacional recebe somente dados permitidos por schemas explícitos.
+
+O campo `context_booster` do alerta registra separadamente a contribuição contextual. `ModelRun` registra seed, hash do dataset, assinatura ordenada das features, versão do código e hash do artefato.
 
 ## Regras de causalidade
 

@@ -22,17 +22,15 @@ export default async function SocialCardPage() {
       </header>
       <section>
         <div className="social-copy">
-          <span className="eyebrow">
-            ENGENHARIA · MACHINE LEARNING · SEGURANÇA
-          </span>
+          <span className="eyebrow">PAYMENT ANOMALY INVESTIGATION</span>
           <h1>
             Do pagamento ao sinal.
             <br />
             <em>Do sinal à explicação.</em>
           </h1>
           <p>
-            Uma plataforma full stack para detectar e investigar comportamentos
-            atípicos sem depender de dados reais.
+            Dados sintéticos, features causais, regras explicáveis, ML não
+            supervisionado e revisão humana.
           </p>
           <div className="social-kpis">
             <div>

@@ -21,7 +21,7 @@ const scenarios = [
     rules: ["NEW_DEVICE", "FAILED_AUTH_BURST", "HIGH_AMOUNT_DEVIATION"],
   },
   {
-    title: "Explosão de velocidade",
+    title: "Pico de velocidade transacional",
     code: "velocity_burst",
     icon: Gauge,
     description:
@@ -89,9 +89,9 @@ export default function ScenariosPage() {
   return (
     <div className="page">
       <PageHeader
-        eyebrow="LABORATÓRIO EDUCACIONAL"
-        title="Oito cenários, sinais diferentes"
-        description="Veja como cada comportamento sintético altera features, aciona regras e contribui para a prioridade final."
+        eyebrow="VALIDATION SCENARIOS"
+        title="Cobertura controlada de sinais"
+        description="Oito comportamentos sintéticos exercitam features, regras e a prioridade combinada sem revelar labels na operação."
       />
       <section className="scenario-grid">
         {scenarios.map(

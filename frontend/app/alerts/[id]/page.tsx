@@ -30,8 +30,8 @@ export default async function AlertDetailsPage({
       </Link>
       <PageHeader
         eyebrow={`CASO ${alert.id}`}
-        title="Entenda o que mudou"
-        description="Evidências rastreáveis para apoiar uma decisão humana — nunca uma condenação automática."
+        title="Prioridade de investigação"
+        description="Case file com evidências rastreáveis, atividade próxima e histórico de revisão."
         actions={
           <div className="header-badges">
             <SeverityBadge severity={alert.severity} />
@@ -72,7 +72,7 @@ export default async function AlertDetailsPage({
           <div className="panel-heading">
             <div>
               <span className="eyebrow">COMPOSIÇÃO DO RISCO</span>
-              <h2>Modelo + regras + contexto</h2>
+              <h2>Decomposição da prioridade</h2>
             </div>
           </div>
           <div className="score-breakdown">
@@ -92,6 +92,12 @@ export default async function AlertDetailsPage({
                 <i style={{ width: `${alert.rules_score}%` }} />
               </em>
               <small>Peso de 45% na combinação</small>
+            </div>
+            <span className="equals">=</span>
+            <div>
+              <span>Booster contextual</span>
+              <strong>+{alert.context_booster.toFixed(1)}</strong>
+              <small>Combinações específicas de sinais</small>
             </div>
             <span className="equals">=</span>
             <div className="final-score">
@@ -134,11 +140,8 @@ export default async function AlertDetailsPage({
               <dd>{tx.status}</dd>
             </div>
             <div>
-              <dt>Cenário</dt>
-              <dd>
-                {tx.synthetic_scenario?.replaceAll("_", " ") ??
-                  "comportamento normal"}
-              </dd>
+              <dt>Aberto em</dt>
+              <dd>{dateTime(alert.created_at)}</dd>
             </div>
           </dl>
         </article>
@@ -232,6 +235,29 @@ export default async function AlertDetailsPage({
           </div>
         </section>
       )}
+      <section className="panel review-history">
+        <div className="panel-heading">
+          <div>
+            <span className="eyebrow">REVIEW HISTORY</span>
+            <h2>Decisões registradas</h2>
+          </div>
+        </div>
+        {alert.feedback?.length ? (
+          <ol>
+            {alert.feedback.map((item) => (
+              <li key={item.id}>
+                <time>{dateTime(item.created_at)}</time>
+                <strong>{item.classification}</strong>
+                <p>{item.comment}</p>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p className="muted-copy">
+            Nenhuma revisão registrada para este caso.
+          </p>
+        )}
+      </section>
       <ReviewActions alertId={alert.id} initialStatus={alert.status} />
     </div>
   );

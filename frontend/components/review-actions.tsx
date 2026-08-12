@@ -25,7 +25,7 @@ export function ReviewActions({
         method: "POST",
         body: JSON.stringify({
           classification,
-          comment: comment || "Revisão registrada pelo analista.",
+          comment: comment || "Revisão registrada sem comentário adicional.",
         }),
       });
       setStatus(
@@ -65,7 +65,7 @@ export function ReviewActions({
           disabled={busy}
           onClick={() => submit("fraude confirmada")}
         >
-          Confirmar fraude sintética
+          Confirmar cenário sintético
         </button>
         <button
           className="button secondary"

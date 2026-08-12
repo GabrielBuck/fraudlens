@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
+  agentRules: false,
   allowedDevOrigins: ["127.0.0.1"],
   experimental: { typedEnv: true },
 };

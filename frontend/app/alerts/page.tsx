@@ -9,6 +9,12 @@ type Search = {
   status?: string;
   search?: string;
   page?: string;
+  min_score?: string;
+  reason_code?: string;
+  payment_method?: string;
+  start_at?: string;
+  end_at?: string;
+  sort?: string;
 };
 
 export default async function AlertsPage({
@@ -18,9 +24,12 @@ export default async function AlertsPage({
 }) {
   const search = await searchParams;
   const params = new URLSearchParams();
-  Object.entries(search).forEach(
-    ([key, value]) => value && params.set(key, value),
-  );
+  Object.entries(search).forEach(([key, value]) => {
+    if (!value) return;
+    if (key === "start_at") params.set(key, `${value}T00:00:00Z`);
+    else if (key === "end_at") params.set(key, `${value}T23:59:59Z`);
+    else params.set(key, value);
+  });
   const data = await apiGet<{
     items: Alert[];
     total: number;
@@ -47,6 +56,56 @@ export default async function AlertsPage({
           />
         </label>
         <label>
+          <span>Score mínimo</span>
+          <input
+            name="min_score"
+            type="number"
+            min="0"
+            max="100"
+            defaultValue={search.min_score}
+            placeholder="30"
+          />
+        </label>
+        <label>
+          <span>Meio</span>
+          <select
+            name="payment_method"
+            defaultValue={search.payment_method ?? ""}
+          >
+            <option value="">Todos</option>
+            <option>PIX</option>
+            <option>TED</option>
+            <option>boleto</option>
+            <option>cartão</option>
+            <option>transferência interna</option>
+          </select>
+        </label>
+        <label>
+          <span>Motivo</span>
+          <input
+            name="reason_code"
+            defaultValue={search.reason_code}
+            placeholder="NEW_DEVICE"
+          />
+        </label>
+        <label>
+          <span>De</span>
+          <input name="start_at" type="date" defaultValue={search.start_at} />
+        </label>
+        <label>
+          <span>Até</span>
+          <input name="end_at" type="date" defaultValue={search.end_at} />
+        </label>
+        <label>
+          <span>Ordenar</span>
+          <select name="sort" defaultValue={search.sort ?? "risk_desc"}>
+            <option value="risk_desc">Maior prioridade</option>
+            <option value="risk_asc">Menor prioridade</option>
+            <option value="newest">Mais recentes</option>
+            <option value="oldest">Mais antigos</option>
+          </select>
+        </label>
+        <label>
           <span>Severidade</span>
           <select name="severity" defaultValue={search.severity ?? ""}>
             <option value="">Todas</option>
@@ -70,7 +129,7 @@ export default async function AlertsPage({
         <button className="button" type="submit">
           Aplicar filtros
         </button>
-        {(search.search || search.severity || search.status) && (
+        {Object.values(search).some(Boolean) && (
           <Link className="text-button" href="/alerts">
             Limpar
           </Link>

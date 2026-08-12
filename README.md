@@ -1,81 +1,95 @@
-<div align="center">
-
 # FraudLens
 
-### Intelligent Payment Anomaly Radar
+**Explainable payment anomaly investigation with synthetic data.**
 
-**Do pagamento ao sinal. Do sinal à explicação.**
+[![Backend CI](https://github.com/GabrielBuck/fraudlens/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/GabrielBuck/fraudlens/actions/workflows/backend-ci.yml)
+[![Frontend CI](https://github.com/GabrielBuck/fraudlens/actions/workflows/frontend-ci.yml/badge.svg)](https://github.com/GabrielBuck/fraudlens/actions/workflows/frontend-ci.yml)
+[![Docker CI](https://github.com/GabrielBuck/fraudlens/actions/workflows/docker-ci.yml/badge.svg)](https://github.com/GabrielBuck/fraudlens/actions/workflows/docker-ci.yml)
+[![Security](https://github.com/GabrielBuck/fraudlens/actions/workflows/security.yml/badge.svg)](https://github.com/GabrielBuck/fraudlens/actions/workflows/security.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-2f3336.svg)](LICENSE)
 
-[![Backend CI](https://img.shields.io/badge/backend-FastAPI-38d9f2)](backend/)
-[![Frontend](https://img.shields.io/badge/frontend-Next.js-8d7cf7)](frontend/)
-[![Data](https://img.shields.io/badge/dados-100%25%20sintéticos-48d7a0)](data/README.md)
-[![License](https://img.shields.io/badge/licença-MIT-f6c85f)](LICENSE)
+![FraudLens risk operations overview](docs/images/overview.png)
 
-</div>
+FraudLens is a full-stack reference implementation for investigating unusual payment behavior. A
+deterministic pipeline generates fictitious accounts and transactions, builds causal features,
+combines an unsupervised Isolation Forest with an explainable rule engine, and delivers a human
+review workflow through a versioned API and an operations console.
 
-![Visão geral do FraudLens](docs/images/overview.png)
+> Scores rank investigation priority. They are not probabilities, proof of fraud, or grounds for an
+> automated financial decision. All records, scenarios, labels, and measured results are synthetic.
 
-> Uma plataforma full stack para geração, detecção, explicação e investigação visual de anomalias em pagamentos digitais totalmente sintéticos.
+[Architecture](docs/ARCHITECTURE.md) · [Model card](docs/MODEL_CARD.md) ·
+[Performance](docs/PERFORMANCE.md) · [Security](docs/SECURITY.md) ·
+[API after startup](http://localhost:8000/docs)
 
-## O problema
-
-Uma lista de scores pouco ajuda um analista a decidir. Investigações de risco precisam conectar volume, comportamento histórico, contexto de acesso, regras acionadas e eventos próximos — mantendo claro que um sinal não é prova de fraude.
-
-## A solução
-
-FraudLens gera contas e pagamentos fictícios, injeta oito cenários controlados, calcula features estritamente históricas, treina um `IsolationForest`, executa regras configuráveis e combina os componentes em uma prioridade de 0 a 100. Cada alerta oferece evidências rastreáveis e permite registrar a decisão humana.
-
-## Funcionalidades
-
-- Gerador determinístico de contas, contrapartes, dispositivos, autenticações e transações.
-- Oito cenários sintéticos: tomada de conta, velocidade, fracionamento, viagem incompatível, duplicidade, horário/valor atípicos, teste de baixo valor e contraparte de risco.
-- 40 features temporais, comportamentais, relacionais, geográficas e de velocidade, sem olhar o futuro.
-- `IsolationForest` reproduzível e motor de 13 regras em YAML.
-- Score transparente: 55% modelo + 45% regras + intensificadores contextuais.
-- Explicações determinísticas em português, sem linguagem acusatória.
-- API FastAPI versionada, paginação, filtros, erros padronizados e Swagger.
-- Dashboard responsivo com overview, alertas, casos, conta, rede, modelo e laboratório.
-- Revisão de alertas e registro de feedback.
-- SQLite por padrão e PostgreSQL opcional via perfil Docker.
-- Testes, CI, auditoria de dependências, CodeQL e documentação de segurança.
-
-## Demonstração
-
-![Central de alertas](docs/images/alerts.png)
-
-O fluxo principal permite partir do KPI executivo, filtrar alertas, entender a composição do score, navegar para o histórico da conta e registrar uma classificação. O painel de modelo apresenta métricas somente no contexto sintético.
-
-## Arquitetura
+## System
 
 ```mermaid
 flowchart LR
-  G[Gerador sintético] --> DB[(SQLite / PostgreSQL)]
-  DB --> F[Features causais]
+  G[Synthetic generator] --> Q[Quality checks + manifest]
+  Q --> DB[(SQLite / PostgreSQL)]
+  DB --> F[Causal features]
   F --> M[Isolation Forest]
-  F --> R[Regras YAML]
-  M --> S[Score combinado]
+  F --> R[Rule engine]
+  M --> S[Investigation score]
   R --> S
-  S --> A[Alertas explicáveis]
+  S --> A[Explainable alerts]
   A --> API[FastAPI /api/v1]
-  API --> UI[Next.js dashboard]
-  UI --> H[Revisão humana]
+  API --> UI[Next.js operations console]
+  UI --> H[Human review history]
   H --> DB
 ```
 
-É um monólito modular: simples para executar e discutir em entrevistas, com limites claros entre dados, detecção, serviços, API e interface. Detalhes e trade-offs estão em [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+The architecture is a modular monolith: easy to run locally, explicit at domain boundaries, and
+simple to evolve without premature distributed infrastructure. The evaluation domain owns synthetic
+labels; operational API contracts and investigation screens never expose them.
 
-## Stack
+## Key capabilities
 
-| Área | Tecnologias |
+- Deterministic generation of accounts, counterparties, devices, authentication events, and payments.
+- Dataset manifest with seed, schema version, temporal range, row counts, quality checks, and SHA-256.
+- Forty historical, temporal, behavioral, relationship, device, and geographic features.
+- Causal windows (`shift(1)` and left-closed rolling windows) tested against future leakage.
+- Reproducible Isolation Forest plus thirteen configurable and individually explainable rules.
+- Transparent formula: `model × 0.55 + rules × 0.45 + contextual booster`, bounded to 0–100.
+- Case files with evidence, nearby activity, account profile, relationship graph, and review history.
+- URL-backed filters for dates, score, severity, status, signal, payment method, and ordering.
+- Explicit Pydantic response models, structured errors, OpenAPI tags, and bounded pagination.
+- Model/data monitoring with dataset hash, feature signature, artifact hash, metrics, and drift indicators.
+- SQLite locally; PostgreSQL, non-root images, health checks, and persistence via Docker Compose.
+- Ruff, mypy, pytest/coverage, ESLint, Prettier, TypeScript, Vitest, Playwright, audits, and CodeQL.
+
+## Detection approach
+
+`IsolationForest` maps low-density multivariate patterns to an anomaly contribution from 0 to 100.
+The rule engine covers legible signals such as new devices, authentication failures, unusual values,
+velocity, and incompatible travel. A contextual booster adds eight points only for configured signal
+combinations. The final value is a queue-ranking mechanism, not a calibrated probability.
+
+Default severity boundaries are `0–29 baixa`, `30–59 média`, `60–79 alta`, and `80–100 crítica`.
+An alert is persisted only when the final score reaches 30 and either rules contribute at least 18 or
+the model contribution reaches 95. Configuration lives in
+[`backend/config/detection.yaml`](backend/config/detection.yaml).
+
+## Data and synthetic evaluation
+
+The standard reproducible run uses `1,000` accounts, `50,000` transactions, and seed `42`. Eight
+controlled validation scenarios produce labels used only after scoring for aggregate evaluation.
+The latest published measurements are documented in [docs/PERFORMANCE.md](docs/PERFORMANCE.md).
+They validate pipeline behavior on constructed scenarios; they do not estimate performance in a
+banking operation.
+
+## Screenshots
+
+| Investigation queue | Case file |
 |---|---|
-| Backend | Python 3.12, FastAPI, Pydantic, SQLAlchemy, Alembic, Typer |
-| Dados/ML | pandas, NumPy, scikit-learn, joblib, YAML |
-| Frontend | Next.js 16, React 19, TypeScript strict, Tailwind CSS, Recharts, React Flow |
-| Persistência | SQLite; PostgreSQL opcional |
-| Qualidade | Ruff, mypy, pytest, coverage, ESLint, Vitest, Playwright |
-| Infra | Docker Compose, Makefile, GitHub Actions, Dependabot, CodeQL |
+| ![Alert queue](docs/images/alerts.png) | ![Alert case file](docs/images/alert-detail.png) |
 
-## Como executar
+| Account profile | Model and data monitoring |
+|---|---|
+| ![Account behavioral profile](docs/images/account.png) | ![Model monitoring](docs/images/model.png) |
+
+## Quick start
 
 ### Docker Compose
 
@@ -84,140 +98,93 @@ cp .env.example .env
 docker compose up --build
 ```
 
-- Dashboard: `http://localhost:3000`
+- Console: `http://localhost:3000`
 - API: `http://localhost:8000`
-- Swagger: `http://localhost:8000/docs`
+- OpenAPI: `http://localhost:8000/docs`
 
-O modo Docker inicializa migrações e cria uma base de demonstração apenas quando o volume persistente está vazio. Para ativar PostgreSQL: `docker compose --profile postgres up --build` e ajuste `DATABASE_URL`.
+The default profile uses SQLite and initializes a small dataset only when its persistent volume is
+empty. PostgreSQL is optional:
 
-Docker não estava disponível no ambiente local original de desenvolvimento. Posteriormente, o GitHub Actions validou a configuração do Compose, os builds das imagens de backend e frontend e um smoke test dos dois serviços. Essa validação não constitui benchmark de performance em containers.
+```bash
+docker compose --profile postgres up --build
+```
 
-### Execução local — Windows
+Set `DATABASE_URL=postgresql+psycopg://fraudlens:fraudlens_local@postgres:5432/fraudlens` in your
+local `.env` when using that profile.
+
+### Local Windows
 
 ```powershell
 .\scripts\setup.ps1
 Set-Location backend
-..\.venv\Scripts\python.exe -m app.cli db init
+..\.venv\Scripts\python.exe -m alembic upgrade head
 ..\.venv\Scripts\python.exe -m app.cli pipeline run-all --accounts 120 --transactions 5000 --seed 42
 ..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
 ```
 
-Em outro terminal:
+In another terminal, run `npm run dev` from `frontend/`. On macOS/Linux, use
+`./scripts/setup.sh` and `.venv/bin/python`.
 
-```powershell
-Set-Location frontend
-npm run dev
-```
-
-### macOS/Linux
+### Standard dataset
 
 ```bash
-./scripts/setup.sh
 cd backend
-../.venv/bin/python -m app.cli pipeline run-all --accounts 120 --transactions 5000 --seed 42
-../.venv/bin/python -m uvicorn app.main:app --reload
+../.venv/bin/python -m app.cli pipeline run-all --accounts 1000 --transactions 50000 --seed 42
 ```
 
-Em outro terminal: `cd frontend && npm run dev`.
-
-### Base completa sugerida
+## Quality gates
 
 ```bash
-python scripts/generate_data.py --accounts 1000 --transactions 50000 --seed 42
-python scripts/train_model.py
-python scripts/score_transactions.py
+# backend
+cd backend
+../.venv/bin/python -m ruff check .
+../.venv/bin/python -m ruff format --check .
+../.venv/bin/python -m mypy app
+../.venv/bin/python -m pytest --cov=app --cov-fail-under=80
+../.venv/bin/python -m pip_audit
+
+# frontend
+cd ../frontend
+npm ci
+npm run lint
+npm run format:check
+npm run typecheck
+npm test -- --run
+npm run build
+npm run test:e2e
+npm audit --audit-level=high
 ```
 
-Ou use `fraudlens pipeline run-all --accounts 1000 --transactions 50000 --seed 42`.
+GitHub Actions also validates migrations, both container images, Compose configuration, service
+startup, HTTP health, the principal Playwright journey, dependency audits, and CodeQL analysis.
 
-## Pipeline de dados
-
-1. Geração determinística e integralmente fictícia.
-2. Ordenação por conta, timestamp e identificador.
-3. Features com `shift`, janelas fechadas à esquerda e estado histórico incremental.
-4. Treino não supervisionado; rótulos ficam fora da matriz.
-5. Transformação do score bruto entre os percentis 1 e 99 da referência.
-6. Regras independentes e normalizadas.
-7. Combinação, severidade, explicação e persistência.
-8. Métricas calculadas depois do scoring, usando rótulo apenas para avaliação.
-
-## Metodologia de detecção
-
-`IsolationForest` aprende regiões de baixa densidade no espaço multivariado. Seu score não é probabilidade. O motor de regras captura condições legíveis como dispositivo novo, valor atípico, velocidade e deslocamento incompatível. A fórmula padrão é:
+## Repository structure
 
 ```text
-risco = clamp(modelo × 0,55 + regras × 0,45 + intensificador, 0, 100)
+backend/        detection, pipeline, persistence, API, migrations, and tests
+frontend/       operations console, components, unit tests, and Playwright journeys
+data/samples/   small inspectable synthetic sample
+docs/           architecture, data, model, performance, security, and case study
+scripts/        setup and reproducible command entry points
+.github/        CI, dependency updates, templates, and security automation
 ```
 
-Faixas: `0–29 baixa`, `30–59 média`, `60–79 alta`, `80–100 crítica`. Para evitar uma fila baseada apenas em sinais fracos, a persistência exige também score de regras ≥ 18 ou score isolado do modelo ≥ 95. Pesos e limites estão em `backend/config/detection.yaml`.
+## Security and responsible use
 
-## Explicabilidade
+FraudLens contains no real customer data, identifiers, banking integrations, or external AI APIs.
+CORS is restricted, inputs are validated, response headers are hardened, logs use correlation IDs,
+and administrative endpoints are disabled by default. The local rate limiter is intentionally
+single-process and does not replace an edge gateway. See [SECURITY.md](SECURITY.md) and the
+[threat model](docs/THREAT_MODEL.md).
 
-Cada alerta mantém score do modelo, score das regras, regras acionadas, valores observados e esperados e explicação textual determinística. O texto usa “comportamento atípico” e “requer investigação”; não acusa pessoas nem afirma intenção.
+## Limitations and roadmap
 
-## Métricas
+- Synthetic scenarios are cleaner and less diverse than real-world abuse.
+- Thresholds are heuristic and have not been calibrated for a live financial process.
+- No authentication, corporate RBAC, immutable audit log, streaming, or automated blocking exists.
+- PSI and aggregate monitoring are exploratory; production would materialize feature-level drift.
+- Joblib is loaded only from the locally generated path; production requires signed artifacts and a registry.
+- A production evolution would add temporal validation, governed feedback, SSO/RBAC, append-only audit,
+  asynchronous idempotent scoring, distributed rate limits, and OpenTelemetry.
 
-Precision, recall, F1, PR-AUC, Precision@K, Recall@K, matriz de confusão, recall por cenário, taxa de alertas e falso positivo são persistidos por execução. Resultados medidos estão em [docs/PERFORMANCE.md](docs/PERFORMANCE.md) e no dashboard. Eles não representam desempenho bancário real.
-
-## Estrutura
-
-```text
-backend/        API, banco, pipeline e testes
-frontend/       dashboard Next.js, testes e screenshots
-data/samples/   pequena amostra sintética versionável
-docs/           arquitetura, modelo, segurança e material de portfólio
-scripts/        setup e entradas diretas do pipeline
-.github/        CI, segurança e governança
-```
-
-## Testes e qualidade
-
-```bash
-make lint
-make typecheck
-make test
-make security
-make build
-```
-
-Em Windows sem `make`, execute os scripts equivalentes de `backend/pyproject.toml` e `frontend/package.json`, conforme a seção de execução.
-
-## Segurança e privacidade
-
-- Nenhum CPF, CNPJ, nome, endereço ou transação real.
-- CORS restrito, payloads validados, paginação limitada e queries parametrizadas.
-- Headers de segurança, correlation ID, logs estruturados e rate limit demonstrativo.
-- Administração desabilitada por padrão e token apenas via ambiente.
-- Modelo carregado somente do artefato local gerado pelo próprio pipeline.
-
-Veja [SECURITY.md](SECURITY.md) e [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
-
-## Limitações
-
-- Dados sintéticos são mais limpos e controláveis que dados reais.
-- Isolation Forest e limiares não foram calibrados para produção.
-- SQLite atende à demonstração, não à concorrência de uma operação real.
-- Rate limiting é local ao processo e não distribuído.
-- Não há autenticação corporativa, streaming, bloqueio ou integração bancária.
-- Feedback é persistido, mas ainda não realimenta treinamento.
-
-## Roadmap
-
-- Validação temporal e calibração com governança formal.
-- Model registry e validação de assinatura de artefatos.
-- Drift por feature e comparação entre versões.
-- Controle de acesso por função e trilha de auditoria imutável.
-- Processamento assíncrono e armazenamento analítico em escala.
-- Aprendizado ativo a partir de feedback revisado.
-
-## Governança
-
-Contribuições seguem [CONTRIBUTING.md](CONTRIBUTING.md) e [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). O projeto usa licença [MIT](LICENSE).
-
-## Autoria
-
-Projeto de portfólio desenvolvido por [GabrielBuck](https://github.com/GabrielBuck).
-
-## English summary
-
-FraudLens is a reproducible full-stack portfolio project for explainable anomaly investigation in synthetic payments. It combines causal feature engineering, an unsupervised Isolation Forest, configurable rules, a versioned FastAPI backend, and a polished Next.js dashboard. All records and labels are synthetic; scores prioritize human review and must not be interpreted as fraud probabilities or evidence.
+Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md). Released under the [MIT License](LICENSE).

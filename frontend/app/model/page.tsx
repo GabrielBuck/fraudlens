@@ -10,30 +10,8 @@ import { PageHeader } from "@/components/page-header";
 import { MetricCard } from "@/components/ui";
 import { apiGet } from "@/lib/api";
 import { dateTime, number, percent } from "@/lib/format";
+import type { DatasetManifest, ModelRun } from "@/lib/types";
 
-interface ModelRun {
-  id: string;
-  model_name: string;
-  model_version: string;
-  started_at: string;
-  training_rows: number;
-  scored_rows: number;
-  feature_list: string[];
-  parameters: Record<string, unknown>;
-  metrics: {
-    precision: number;
-    recall: number;
-    f1: number;
-    precision_at_k: number;
-    recall_at_k: number;
-    pr_auc: number;
-    confusion_matrix: number[][];
-    scenario_recall: Record<string, number>;
-    alert_rate: number;
-    false_positive_rate: number;
-    score_distribution: Array<{ bucket: string; count: number }>;
-  };
-}
 interface Monitoring {
   drift: string;
   indicators: Array<{ name: string; value: number; status: string }>;
@@ -41,15 +19,16 @@ interface Monitoring {
 }
 
 export default async function ModelPage() {
-  const [run, monitoring] = await Promise.all([
+  const [run, monitoring, dataset] = await Promise.all([
     apiGet<ModelRun>("/api/v1/model-runs/latest"),
     apiGet<Monitoring>("/api/v1/model-monitoring"),
+    apiGet<DatasetManifest>("/api/v1/dataset-manifests/latest"),
   ]);
   const metrics = run.metrics;
   return (
     <div className="page">
       <PageHeader
-        eyebrow="MONITORAMENTO DO MODELO"
+        eyebrow="MODEL & DATA MONITORING"
         title={`${run.model_name} · v${run.model_version}`}
         description={`Treinado em ${dateTime(run.started_at)}. Métricas exclusivamente sobre cenários e rótulos sintéticos.`}
         actions={
@@ -58,6 +37,36 @@ export default async function ModelPage() {
           </span>
         }
       />
+      <section className="provenance-strip">
+        <dl>
+          <div>
+            <dt>Model run</dt>
+            <dd>{run.id}</dd>
+          </div>
+          <div>
+            <dt>Seed</dt>
+            <dd>{run.seed}</dd>
+          </div>
+          <div>
+            <dt>Dataset</dt>
+            <dd title={run.dataset_hash}>{run.dataset_hash.slice(0, 12)}</dd>
+          </div>
+          <div>
+            <dt>Feature signature</dt>
+            <dd title={run.feature_signature}>
+              {run.feature_signature.slice(0, 12)}
+            </dd>
+          </div>
+          <div>
+            <dt>Artifact</dt>
+            <dd title={run.artifact_hash}>{run.artifact_hash.slice(0, 12)}</dd>
+          </div>
+          <div>
+            <dt>Schema</dt>
+            <dd>v{dataset.schema_version}</dd>
+          </div>
+        </dl>
+      </section>
       <section className="metric-grid">
         <MetricCard
           label="Precision"
@@ -155,6 +164,44 @@ export default async function ModelPage() {
             )}
           </div>
         </article>
+      </section>
+      <section className="panel dataset-integrity">
+        <div className="panel-heading">
+          <div>
+            <span className="eyebrow">DATASET INTEGRITY</span>
+            <h2>Manifesto da execução</h2>
+          </div>
+          <strong className="quality-state">
+            {dataset.quality_report.status}
+          </strong>
+        </div>
+        <dl>
+          <div>
+            <dt>Período</dt>
+            <dd>
+              {dateTime(dataset.period_start)} → {dateTime(dataset.period_end)}
+            </dd>
+          </div>
+          <div>
+            <dt>Contas</dt>
+            <dd>{number(dataset.account_count)}</dd>
+          </div>
+          <div>
+            <dt>Transações</dt>
+            <dd>{number(dataset.transaction_count)}</dd>
+          </div>
+          <div>
+            <dt>Linhas de cenário</dt>
+            <dd>{number(dataset.scenario_rows)}</dd>
+          </div>
+          <div>
+            <dt>Checks</dt>
+            <dd>
+              {dataset.quality_report.passed} aprovados ·{" "}
+              {dataset.quality_report.failed} falhas
+            </dd>
+          </div>
+        </dl>
       </section>
       <section className="model-note">
         <strong>Como interpretar</strong>
