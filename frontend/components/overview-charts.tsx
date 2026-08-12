@@ -17,11 +17,16 @@ import {
 } from "recharts";
 
 const colors: Record<string, string> = {
-  baixa: "#48d7a0",
-  média: "#f6c85f",
-  alta: "#ff8f5c",
-  crítica: "#ff5570",
+  baixa: "#5f9677",
+  média: "#c89b3c",
+  alta: "#c9763f",
+  crítica: "#df5b57",
 };
+
+const compactNumber = new Intl.NumberFormat("pt-BR", {
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
 
 export function TimelineChart({
   data,
@@ -38,44 +43,57 @@ export function TimelineChart({
         <AreaChart data={data}>
           <defs>
             <linearGradient id="volumeGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#38d9f2" stopOpacity={0.35} />
-              <stop offset="100%" stopColor="#38d9f2" stopOpacity={0} />
+              <stop offset="0%" stopColor="#7894a6" stopOpacity={0.28} />
+              <stop offset="100%" stopColor="#7894a6" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid stroke="#203142" vertical={false} />
+          <CartesianGrid stroke="#30353a" vertical={false} />
           <XAxis
             dataKey="date"
-            stroke="#73879a"
+            stroke="#81878c"
             tickLine={false}
             axisLine={false}
             minTickGap={28}
           />
           <YAxis
-            stroke="#73879a"
+            yAxisId="volume"
+            stroke="#81878c"
             tickLine={false}
             axisLine={false}
-            width={48}
+            tickFormatter={(value: number) => compactNumber.format(value)}
+            width={54}
+          />
+          <YAxis
+            yAxisId="alerts"
+            orientation="right"
+            stroke="#81878c"
+            tickLine={false}
+            axisLine={false}
+            allowDecimals={false}
+            width={36}
           />
           <Tooltip
             contentStyle={{
-              background: "#102131",
-              border: "1px solid #2b4255",
-              borderRadius: 12,
+              background: "#202326",
+              border: "1px solid #3b4045",
+              borderRadius: 6,
             }}
           />
           <Area
+            yAxisId="volume"
             type="monotone"
             dataKey="volume"
             name="Volume (R$)"
-            stroke="#38d9f2"
+            stroke="#89a6b8"
             strokeWidth={2.5}
             fill="url(#volumeGradient)"
           />
           <Area
+            yAxisId="alerts"
             type="monotone"
             dataKey="alerts"
             name="Alertas"
-            stroke="#ff8f5c"
+            stroke="#d58a45"
             strokeWidth={2}
             fill="none"
           />
@@ -109,15 +127,15 @@ export function SeverityChart({
             {data.map((entry) => (
               <Cell
                 key={entry.severity}
-                fill={colors[entry.severity] ?? "#38d9f2"}
+                fill={colors[entry.severity] ?? "#7894a6"}
               />
             ))}
           </Pie>
           <Tooltip
             contentStyle={{
-              background: "#102131",
-              border: "1px solid #2b4255",
-              borderRadius: 12,
+              background: "#202326",
+              border: "1px solid #3b4045",
+              borderRadius: 6,
             }}
           />
           <Legend iconType="circle" />
@@ -139,28 +157,28 @@ export function PaymentChart({
       aria-label="Alertas por meio de pagamento"
     >
       <ResponsiveContainer width="100%" height={260}>
-        <BarChart data={data} layout="vertical" margin={{ left: 12 }}>
-          <CartesianGrid stroke="#203142" horizontal={false} />
+        <BarChart data={data} layout="vertical" margin={{ left: 16 }}>
+          <CartesianGrid stroke="#30353a" horizontal={false} />
           <XAxis type="number" hide />
           <YAxis
             type="category"
             dataKey="method"
-            stroke="#93a7b9"
-            width={100}
+            stroke="#9da2a7"
+            width={116}
             tickLine={false}
             axisLine={false}
           />
           <Tooltip
             contentStyle={{
-              background: "#102131",
-              border: "1px solid #2b4255",
-              borderRadius: 12,
+              background: "#202326",
+              border: "1px solid #3b4045",
+              borderRadius: 6,
             }}
           />
           <Bar
             dataKey="alerts"
             name="Alertas"
-            fill="#38d9f2"
+            fill="#7894a6"
             radius={[0, 6, 6, 0]}
           />
         </BarChart>
@@ -182,25 +200,25 @@ export function ScoreHistogram({
     >
       <ResponsiveContainer width="100%" height={260}>
         <BarChart data={data}>
-          <CartesianGrid stroke="#203142" vertical={false} />
+          <CartesianGrid stroke="#30353a" vertical={false} />
           <XAxis
             dataKey="bucket"
-            stroke="#73879a"
+            stroke="#81878c"
             tickLine={false}
             axisLine={false}
           />
-          <YAxis stroke="#73879a" tickLine={false} axisLine={false} />
+          <YAxis stroke="#81878c" tickLine={false} axisLine={false} />
           <Tooltip
             contentStyle={{
-              background: "#102131",
-              border: "1px solid #2b4255",
-              borderRadius: 12,
+              background: "#202326",
+              border: "1px solid #3b4045",
+              borderRadius: 6,
             }}
           />
           <Bar
             dataKey="count"
             name="Transações"
-            fill="#7c6cf2"
+            fill="#8b7347"
             radius={[5, 5, 0, 0]}
           />
         </BarChart>

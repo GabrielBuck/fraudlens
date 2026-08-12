@@ -1,9 +1,16 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { AlertTable } from "../components/alert-table";
+import { isRouteActive } from "../components/active-navigation";
 import { MetricCard, SeverityBadge } from "../components/ui";
 
 describe("core dashboard components", () => {
+  it("derives active navigation from the current route", () => {
+    expect(isRouteActive("/", "/")).toBe(true);
+    expect(isRouteActive("/alerts/ALT-00000001", "/alerts")).toBe(true);
+    expect(isRouteActive("/model", "/")).toBe(false);
+    expect(isRouteActive("/accounts", "/alerts")).toBe(false);
+  });
   it("renders a contextual metric", () => {
     render(
       <MetricCard

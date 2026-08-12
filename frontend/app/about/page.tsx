@@ -12,7 +12,7 @@ export default function AboutPage() {
   return (
     <div className="page">
       <PageHeader
-        eyebrow="SOBRE O PROJETO"
+        eyebrow="SYSTEM REFERENCE"
         title="Tecnologia para investigar, não condenar"
         description="FraudLens conecta engenharia de dados, machine learning, produto e segurança em uma demonstração reproduzível."
       />
@@ -80,9 +80,9 @@ export default function AboutPage() {
       <section className="responsible-use">
         <strong>Uso responsável</strong>
         <p>
-          Este é um projeto educacional de portfólio. Todos os dados e cenários
-          são sintéticos. Não deve ser usado para decisões financeiras,
-          bloqueios, acusações ou análise de pessoas reais.
+          Esta é uma implementação de referência com dados e cenários
+          integralmente sintéticos. Não deve ser usada para decisões
+          financeiras, bloqueios, acusações ou análise de pessoas reais.
         </p>
       </section>
     </div>
