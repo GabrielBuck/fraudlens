@@ -2,7 +2,7 @@
 
 ## Visão geral
 
-FraudLens é um monólito modular com duas aplicações: uma API/pipeline Python e um dashboard Next.js. SQLite reduz a barreira local; SQLAlchemy mantém a opção PostgreSQL. O design favorece rastreabilidade, reprodução e uma demonstração de portfólio compreensível.
+FraudLens é um monólito modular com duas aplicações: uma API/pipeline Python e um console Next.js. SQLite reduz a barreira local; SQLAlchemy mantém a opção PostgreSQL. O design favorece rastreabilidade, reprodução e limites técnicos verificáveis.
 
 ## Contexto
 
@@ -36,7 +36,8 @@ flowchart TB
 ```mermaid
 flowchart LR
   Seed[Seed + configuração] --> Gen[Gerador]
-  Gen --> Raw[Entidades sintéticas]
+  Gen --> Quality[Validação + manifesto]
+  Quality --> Raw[Entidades sintéticas]
   Raw --> Feat[Features históricas]
   Feat --> Fit[Fit Isolation Forest]
   Feat --> Rules[Regras YAML]
@@ -46,7 +47,7 @@ flowchart LR
   RuleScore --> Combine
   Combine --> Explain[Explicação determinística]
   Explain --> Alerts[(Alertas)]
-  Alerts --> Eval[Avaliação com rótulos isolados]
+  Alerts --> Eval[Avaliação agregada com rótulos isolados]
 ```
 
 ## Sequência de scoring
@@ -90,7 +91,11 @@ flowchart TD
 
 ## Banco e índices
 
-As tabelas são `accounts`, `counterparties`, `devices`, `authentication_events`, `transactions`, `alerts`, `model_runs` e `alert_feedback`. Índices compostos cobrem conta/tempo, método/tempo, severidade/score e status/criação. Os campos de evidência e métricas usam JSON por serem documentos derivados e imutáveis dentro do alerta/execução.
+As tabelas são `accounts`, `counterparties`, `devices`, `authentication_events`, `transactions`, `alerts`, `model_runs`, `dataset_manifests` e `alert_feedback`. Índices compostos cobrem conta/tempo, método/tempo, severidade/score e status/criação. Evidências, métricas e relatórios de qualidade usam JSON por serem documentos derivados dentro do alerta ou da execução.
+
+## Fronteiras de operação e avaliação
+
+`synthetic_ground_truth` e `synthetic_scenario` existem apenas na persistência e no pipeline de avaliação. Schemas Pydantic operacionais selecionam campos explicitamente e impedem que esses labels cheguem às transações, alertas, timelines ou telas de investigação. A superfície de avaliação publica somente manifesto, proveniência e métricas agregadas.
 
 ## API
 

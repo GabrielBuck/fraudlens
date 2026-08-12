@@ -1,7 +1,11 @@
-# Política de Segurança
+# Política de segurança
 
-Não abra issue pública com detalhes exploráveis. Reporte vulnerabilidades pelo canal privado do GitHub Security Advisories do repositório ou para `[SEU E-MAIL DE SEGURANÇA]`.
+Não abra uma issue pública com detalhes exploráveis. Use o fluxo privado de
+[Security Advisories](https://github.com/GabrielBuck/fraudlens/security/advisories/new) do GitHub.
 
-Inclua versão, impacto, pré-condições e passos mínimos de reprodução sem dados reais. O escopo cobre API, dashboard, pipeline, Docker e automação. Este projeto processa somente dados sintéticos e não é uma solução de produção.
+Inclua versão, impacto, pré-condições e passos mínimos de reprodução, sempre sem dados reais.
+O escopo inclui API, interface, pipeline, imagens Docker e automações. O FraudLens opera
+exclusivamente com dados sintéticos e não é uma solução pronta para produção.
 
-Práticas implementadas e riscos residuais estão detalhados em [docs/SECURITY.md](docs/SECURITY.md) e [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
+Controles implementados e riscos residuais estão em
+[docs/SECURITY.md](docs/SECURITY.md) e [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
