@@ -215,7 +215,7 @@ def score_transactions(session: Session, settings: Settings | None = None) -> di
     features = build_feature_frame(session)
     detector = IsolationForestDetector.load(artifact_path)
     model_scores = detector.score(features)
-    rule_engine = RuleEngine(Path(__file__).parents[2] / "config" / "detection.yaml")
+    rule_engine = RuleEngine(settings.detection_config_path.resolve())
     scoring_config = rule_engine.config["scoring"]
     session.execute(delete(AlertFeedback))
     session.execute(delete(Alert))

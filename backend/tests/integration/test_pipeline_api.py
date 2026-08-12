@@ -8,6 +8,7 @@ from app.core.config import Settings
 from app.db.models import ModelRun
 from app.db.session import Base, get_db
 from app.main import app
+from app.services import pipeline
 from app.services.pipeline import run_all
 
 EVALUATION_LABELS = {"synthetic_ground_truth", "synthetic_scenario"}
@@ -23,7 +24,7 @@ def _assert_operational_payload_has_no_labels(value: object) -> None:
             _assert_operational_payload_has_no_labels(nested)
 
 
-def test_end_to_end_pipeline_and_api(tmp_path: Path) -> None:
+def test_end_to_end_pipeline_and_api(tmp_path: Path, monkeypatch) -> None:
     engine = create_engine(
         f"sqlite:///{tmp_path / 'test.db'}", connect_args={"check_same_thread": False}
     )
@@ -31,8 +32,14 @@ def test_end_to_end_pipeline_and_api(tmp_path: Path) -> None:
     settings = Settings(
         database_url=str(engine.url),
         model_artifact_path=tmp_path / "model.joblib",
+        detection_config_path=Path(__file__).parents[2] / "config" / "detection.yaml",
         default_account_count=8,
         default_transaction_count=120,
+    )
+    monkeypatch.setattr(
+        pipeline,
+        "__file__",
+        "/opt/venv/lib/python3.12/site-packages/app/services/pipeline.py",
     )
     with Session(engine) as session:
         result = run_all(session, 8, 120, 42, settings)
@@ -156,6 +163,7 @@ def test_dynamic_overview_periods_shift_with_dataset(tmp_path: Path) -> None:
     settings = Settings(
         database_url=str(engine.url),
         model_artifact_path=tmp_path / "period-model.joblib",
+        detection_config_path=Path(__file__).parents[2] / "config" / "detection.yaml",
     )
     with Session(engine) as session:
         run_all(session, 8, 120, 7, settings)

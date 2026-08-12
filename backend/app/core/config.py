@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     default_account_count: int = Field(default=1000, ge=8, le=100_000)
     default_transaction_count: int = Field(default=50_000, ge=80, le=5_000_000)
     model_artifact_path: Path = Path("./artifacts/isolation_forest.joblib")
+    detection_config_path: Path = Path("./config/detection.yaml")
 
     @field_validator("frontend_url")
     @classmethod

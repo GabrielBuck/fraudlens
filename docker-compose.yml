@@ -5,6 +5,7 @@ services:
       DATABASE_URL: sqlite:////data/fraudlens.db
       FRONTEND_URL: http://localhost:3000
       MODEL_ARTIFACT_PATH: /data/isolation_forest.joblib
+      DETECTION_CONFIG_PATH: /app/config/detection.yaml
       AUTO_SEED: "true"
       DEFAULT_ACCOUNT_COUNT: "120"
       DEFAULT_TRANSACTION_COUNT: "5000"
