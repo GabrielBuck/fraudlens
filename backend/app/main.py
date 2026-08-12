@@ -24,6 +24,10 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="FraudLens API",
     summary="API de investigação de anomalias em pagamentos sintéticos",
+    description=(
+        "Contratos operacionais para investigação humana e endpoints agregados de avaliação "
+        "sintética. Scores ordenam prioridade; não estimam probabilidade de fraude."
+    ),
     version=__version__,
     docs_url="/docs",
     redoc_url="/redoc",
@@ -43,6 +47,16 @@ app.include_router(router)
 request_windows: dict[str, deque[float]] = defaultdict(deque)
 
 
+def _secure_response(response: Response, correlation_id: str) -> Response:
+    response.headers["X-Correlation-ID"] = correlation_id
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
+    return response
+
+
 @app.middleware("http")
 async def security_and_observability(
     request: Request,
@@ -56,26 +70,24 @@ async def security_and_observability(
     while window and window[0] < now - 60:
         window.popleft()
     if len(window) >= 240:
-        return JSONResponse(
-            status_code=429,
-            content={
-                "error": {
-                    "code": "RATE_LIMITED",
-                    "message": "Muitas requisições.",
-                    "details": None,
-                    "correlation_id": correlation_id,
-                }
-            },
+        return _secure_response(
+            JSONResponse(
+                status_code=429,
+                content={
+                    "error": {
+                        "code": "RATE_LIMITED",
+                        "message": "Muitas requisições.",
+                        "details": None,
+                        "correlation_id": correlation_id,
+                    }
+                },
+            ),
+            correlation_id,
         )
     window.append(now)
     response = await call_next(request)
     duration_ms = round((time.perf_counter() - started) * 1000, 2)
-    response.headers["X-Correlation-ID"] = correlation_id
-    response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["X-Frame-Options"] = "DENY"
-    response.headers["Referrer-Policy"] = "no-referrer"
-    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
-    response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
+    _secure_response(response, correlation_id)
     logger.info(
         "%s %s %s",
         request.method,
@@ -85,6 +97,9 @@ async def security_and_observability(
             "correlation_id": correlation_id,
             "duration_ms": duration_ms,
             "event": "http_request",
+            "method": request.method,
+            "route": request.url.path,
+            "status": response.status_code,
         },
     )
     return response
@@ -127,7 +142,7 @@ async def unexpected_error_handler(request: Request, exc: Exception) -> JSONResp
     )
 
 
-@app.get("/health")
+@app.get("/health", tags=["System"], summary="Service health")
 def health() -> dict[str, Any]:
     return {
         "status": "ok",

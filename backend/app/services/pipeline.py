@@ -13,6 +13,7 @@ import pandas as pd
 from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 
+from app import __version__
 from app.core.config import Settings, get_settings
 from app.db.models import (
     Account,
@@ -20,14 +21,16 @@ from app.db.models import (
     AlertFeedback,
     AuthenticationEvent,
     Counterparty,
+    DatasetManifest,
     Device,
     ModelRun,
     Transaction,
 )
+from app.detection.data_quality import validate_generated_data
 from app.detection.explanations import DeterministicExplanationGenerator
 from app.detection.features import MODEL_FEATURES, build_features
 from app.detection.generator import generate_synthetic_data
-from app.detection.metrics import evaluate_scores
+from app.detection.metrics import evaluate_scores, population_stability_index
 from app.detection.model import IsolationForestDetector
 from app.detection.rules import RuleEngine
 from app.detection.scoring import combine_scores
@@ -49,6 +52,7 @@ def reset_database(session: Session) -> None:
         AlertFeedback,
         Alert,
         ModelRun,
+        DatasetManifest,
         AuthenticationEvent,
         Transaction,
         Device,
@@ -70,6 +74,7 @@ def persist_generated_data(
     if reset:
         reset_database(session)
     generated = generate_synthetic_data(account_count, transaction_count, seed)
+    quality = validate_generated_data(generated)
     session.bulk_insert_mappings(Account, generated.accounts)
     session.bulk_insert_mappings(Counterparty, generated.counterparties)
     session.bulk_insert_mappings(Device, generated.devices)
@@ -79,15 +84,57 @@ def persist_generated_data(
     scenarios = sorted(
         {row["synthetic_scenario"] for row in generated.transactions if row["synthetic_scenario"]}
     )
+
+    def canonical(value: Any) -> Any:
+        if isinstance(value, datetime):
+            return value.isoformat()
+        raise TypeError(f"Unsupported dataset value: {type(value)!r}")
+
     digest = hashlib.sha256(
-        "|".join(row["id"] + str(row["amount"]) for row in generated.transactions).encode()
-    ).hexdigest()[:16]
+        json.dumps(
+            {
+                "accounts": generated.accounts,
+                "counterparties": generated.counterparties,
+                "devices": generated.devices,
+                "authentication_events": generated.authentication_events,
+                "transactions": generated.transactions,
+            },
+            default=canonical,
+            ensure_ascii=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+    ).hexdigest()
+    timestamps = [row["timestamp"] for row in generated.transactions]
+    scenario_rows = sum(bool(row["synthetic_ground_truth"]) for row in generated.transactions)
+    generated_at = datetime.now(UTC)
+    manifest = DatasetManifest(
+        id=f"DST-{generated_at.strftime('%Y%m%d%H%M%S%f')[:18]}",
+        schema_version="1.0",
+        generated_at=generated_at,
+        seed=seed,
+        account_count=len(generated.accounts),
+        transaction_count=len(generated.transactions),
+        scenario_count=len(scenarios),
+        scenario_rows=scenario_rows,
+        period_start=min(timestamps),
+        period_end=max(timestamps),
+        dataset_hash=digest,
+        quality_report=quality,
+    )
+    session.add(manifest)
+    session.commit()
     result = {
         "accounts": len(generated.accounts),
         "transactions": len(generated.transactions),
         "scenarios": scenarios,
         "seed": seed,
         "dataset_hash": digest,
+        "manifest_id": manifest.id,
+        "period_start": manifest.period_start,
+        "period_end": manifest.period_end,
+        "scenario_rows": scenario_rows,
+        "quality": quality,
         "duration_seconds": round(time.perf_counter() - started, 3),
     }
     logger.info("Synthetic dataset generated", extra={"event": "data_generated"})
@@ -111,23 +158,35 @@ def train_model(session: Session, settings: Settings | None = None) -> dict[str,
     features = build_feature_frame(session)
     if features.empty:
         raise ValueError("No transactions available. Generate data before training.")
-    detector = IsolationForestDetector(seed=settings.random_seed)
+    manifest = session.scalar(
+        select(DatasetManifest).order_by(DatasetManifest.generated_at.desc()).limit(1)
+    )
+    if manifest is None:
+        raise ValueError("Dataset manifest not found. Generate data before training.")
+    detector = IsolationForestDetector(seed=manifest.seed)
     detector.fit(features)
     artifact_path = settings.model_artifact_path.resolve()
     detector.save(artifact_path)
+    artifact_hash = hashlib.sha256(artifact_path.read_bytes()).hexdigest()
+    feature_signature = hashlib.sha256("|".join(MODEL_FEATURES).encode()).hexdigest()
     run_id = f"RUN-{started.strftime('%Y%m%d%H%M%S%f')[:18]}"
     run = ModelRun(
         id=run_id,
         model_name="IsolationForest",
         model_version="1.0.0",
+        seed=manifest.seed,
+        dataset_hash=manifest.dataset_hash,
+        feature_signature=feature_signature,
+        code_version=__version__,
         started_at=started,
         completed_at=datetime.now(UTC),
         training_rows=len(features),
         scored_rows=0,
         feature_list=MODEL_FEATURES,
-        parameters={"n_estimators": 180, "contamination": 0.08, "seed": settings.random_seed},
+        parameters={"n_estimators": 180, "contamination": 0.08, "seed": manifest.seed},
         metrics={},
         artifact_path=str(artifact_path),
+        artifact_hash=artifact_hash,
         status="trained",
     )
     session.add(run)
@@ -136,6 +195,10 @@ def train_model(session: Session, settings: Settings | None = None) -> dict[str,
         "model_run_id": run_id,
         "training_rows": len(features),
         "artifact_path": str(artifact_path),
+        "artifact_hash": artifact_hash,
+        "dataset_hash": manifest.dataset_hash,
+        "feature_signature": feature_signature,
+        "seed": manifest.seed,
         "duration_seconds": round(time.perf_counter() - clock_started, 3),
     }
 
@@ -170,6 +233,9 @@ def score_transactions(session: Session, settings: Settings | None = None) -> di
             rule_results,
             float(scoring_config["model_weight"]),
             float(scoring_config["rules_weight"]),
+            float(scoring_config["severity_thresholds"]["medium"]),
+            float(scoring_config["severity_thresholds"]["high"]),
+            float(scoring_config["severity_thresholds"]["critical"]),
         )
         final_scores[position] = risk.final
         severity_counts[risk.severity] += 1
@@ -191,6 +257,7 @@ def score_transactions(session: Session, settings: Settings | None = None) -> di
                 severity=risk.severity,
                 model_score=risk.model,
                 rules_score=risk.rules,
+                context_booster=risk.booster,
                 reason_codes=[result.rule_id for result in triggered],
                 explanation=explainer.generate(risk, rule_results),
                 evidence=[result.to_dict() for result in triggered],
@@ -214,6 +281,37 @@ def score_transactions(session: Session, settings: Settings | None = None) -> di
         }
         for start in range(0, 100, 10)
     ]
+    split = max(1, len(features) * 3 // 4)
+    reference_amounts = features["amount"].to_numpy(dtype=float)[:split]
+    recent_amounts = features["amount"].to_numpy(dtype=float)[split:]
+    psi = population_stability_index(reference_amounts, recent_amounts)
+    drift = "relevante" if psi >= 0.25 else "atenção" if psi >= 0.1 else "estável"
+    metrics["monitoring"] = {
+        "status": "available",
+        "drift": drift,
+        "indicators": [
+            {"name": "PSI de valores", "value": round(psi, 4), "status": drift},
+            {
+                "name": "Diferença de média",
+                "value": round(float(recent_amounts.mean() - reference_amounts.mean()), 2),
+                "status": drift,
+            },
+            {
+                "name": "Diferença de desvio-padrão",
+                "value": round(float(recent_amounts.std() - reference_amounts.std()), 2),
+                "status": drift,
+            },
+            {
+                "name": "Taxa recente de alertas",
+                "value": round(float(alert_predictions[split:].mean()), 4),
+                "status": "informativo",
+            },
+        ],
+        "disclaimer": (
+            "Sinal estatístico exploratório sobre dados sintéticos; não representa "
+            "conclusão definitiva de drift."
+        ),
+    }
     latest_run.scored_rows = len(features)
     latest_run.metrics = metrics
     latest_run.completed_at = datetime.now(UTC)

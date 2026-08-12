@@ -112,6 +112,7 @@ class Alert(Base):
     severity: Mapped[str] = mapped_column(String(12), index=True)
     model_score: Mapped[float] = mapped_column(Float)
     rules_score: Mapped[float] = mapped_column(Float)
+    context_booster: Mapped[float] = mapped_column(Float, default=0.0)
     reason_codes: Mapped[list[str]] = mapped_column(JSON, default=list)
     explanation: Mapped[str] = mapped_column(Text)
     evidence: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
@@ -127,6 +128,10 @@ class ModelRun(Base):
     id: Mapped[str] = mapped_column(String(20), primary_key=True)
     model_name: Mapped[str] = mapped_column(String(48))
     model_version: Mapped[str] = mapped_column(String(24))
+    seed: Mapped[int] = mapped_column(Integer)
+    dataset_hash: Mapped[str] = mapped_column(String(64), index=True)
+    feature_signature: Mapped[str] = mapped_column(String(64))
+    code_version: Mapped[str] = mapped_column(String(40))
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     training_rows: Mapped[int] = mapped_column(Integer)
@@ -135,7 +140,25 @@ class ModelRun(Base):
     parameters: Mapped[dict[str, Any]] = mapped_column(JSON)
     metrics: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     artifact_path: Mapped[str] = mapped_column(String(255))
+    artifact_hash: Mapped[str] = mapped_column(String(64))
     status: Mapped[str] = mapped_column(String(16), index=True)
+
+
+class DatasetManifest(Base):
+    __tablename__ = "dataset_manifests"
+
+    id: Mapped[str] = mapped_column(String(24), primary_key=True)
+    schema_version: Mapped[str] = mapped_column(String(16))
+    generated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    seed: Mapped[int] = mapped_column(Integer)
+    account_count: Mapped[int] = mapped_column(Integer)
+    transaction_count: Mapped[int] = mapped_column(Integer)
+    scenario_count: Mapped[int] = mapped_column(Integer)
+    scenario_rows: Mapped[int] = mapped_column(Integer)
+    period_start: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    period_end: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    dataset_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    quality_report: Mapped[dict[str, Any]] = mapped_column(JSON)
 
 
 class AlertFeedback(Base):
