@@ -125,7 +125,7 @@ class Alert(Base):
 class ModelRun(Base):
     __tablename__ = "model_runs"
 
-    id: Mapped[str] = mapped_column(String(20), primary_key=True)
+    id: Mapped[str] = mapped_column(String(24), primary_key=True)
     model_name: Mapped[str] = mapped_column(String(48))
     model_version: Mapped[str] = mapped_column(String(24))
     seed: Mapped[int] = mapped_column(Integer)

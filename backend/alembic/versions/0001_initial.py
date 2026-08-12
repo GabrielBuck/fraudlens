@@ -136,7 +136,7 @@ def upgrade() -> None:
     op.create_index("ix_alerts_status_created", "alerts", ["status", "created_at"])
     op.create_table(
         "model_runs",
-        sa.Column("id", sa.String(20), primary_key=True),
+        sa.Column("id", sa.String(24), primary_key=True),
         sa.Column("model_name", sa.String(48), nullable=False),
         sa.Column("model_version", sa.String(24), nullable=False),
         sa.Column("started_at", sa.DateTime(timezone=True), nullable=False),

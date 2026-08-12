@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from app.core.config import Settings
+from app.db.models import ModelRun
 from app.db.session import Base, get_db
 from app.main import app
 from app.services.pipeline import run_all
@@ -99,6 +100,7 @@ def test_end_to_end_pipeline_and_api(tmp_path: Path) -> None:
     assert runs
     latest = client.get("/api/v1/model-runs/latest").json()
     assert latest["seed"] == 42
+    assert len(latest["id"]) <= ModelRun.__table__.c.id.type.length
     assert latest["artifact_hash"]
     assert "artifact_path" not in latest
     assert latest["started_at"].endswith("Z")
