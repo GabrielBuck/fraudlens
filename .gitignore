@@ -34,3 +34,6 @@ data/generated/
 Thumbs.db
 work/
 outputs/
+/AGENTS.md
+/frontend/AGENTS.md
+/frontend/CLAUDE.md
